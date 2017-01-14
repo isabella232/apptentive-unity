@@ -21,4 +21,6 @@ OBJC_EXTERN BOOL __apptentive_present_message_center(const char *customData);
 
 OBJC_EXTERN BOOL __apptentive_can_show_interaction(const char *eventName);
 
+OBJC_EXTERN BOOL __apptentive_can_show_message_center(void);
+
 #endif /* apptentive_unity_native_interface_h */

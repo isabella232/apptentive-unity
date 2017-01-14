@@ -4,13 +4,18 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 using UnityEditor.Callbacks;
+
+#if UNITY_IOS || UNITY_IPHONE
 using UnityEditor.iOS.Xcode;
+#endif
+
 using System.IO;
 
 namespace ApptentiveConnectInternal
 {
     static class BuildPostProcessBuild
     {
+        #if UNITY_IOS || UNITY_IPHONE
         [PostProcessBuild(1000)]
         public static void OnPostProcessBuild(BuildTarget target, string pathToBuiltProject)
         {
@@ -26,5 +31,6 @@ namespace ApptentiveConnectInternal
             proj.AddBuildProperty(targetGUID, "OTHER_LDFLAGS", "-ObjC"); 
             File.WriteAllText(projPath, proj.WriteToString());
         }
+        #endif
     }
 }

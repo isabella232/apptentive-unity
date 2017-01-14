@@ -98,8 +98,8 @@ namespace ApptentiveConnect
             #elif UNITY_ANDROID
             if (Application.platform == RuntimePlatform.Android)
             {
-                LunarConsoleNativeMessageCallback callback = NativeMessageCallback;
-                return new PlatformAndroid(gameObject.name, callback.Method.Name, Constants.Version, capacity, trim, GetGestureName(m_gesture));
+                ApptentiveNativeMessageCallback callback = NativeMessageCallback;
+                return new PlatformAndroid(gameObject.name, callback.Method.Name, Constants.Version, APIKey);
             }
             #endif
 
@@ -110,7 +110,8 @@ namespace ApptentiveConnect
         {
             bool Engage(string evt, IDictionary<string, object> customData);
             bool PresentMessageCenter(IDictionary<string, object> customData);
-            bool CanShowInteractionForEvent(string eventName);
+            bool CanShowInteraction(string eventName);
+            bool CanShowMessageCenter { get; }
         }
 
         #if UNITY_IOS || UNITY_IPHONE
@@ -128,6 +129,9 @@ namespace ApptentiveConnect
 
             [DllImport("__Internal")]
             private static extern bool __apptentive_can_show_interaction(string customData);
+
+            [DllImport("__Internal")]
+            private static extern bool __apptentive_can_show_message_center();
             
             /// <summary>
             /// Initializes a new instance of the iOS platform class.
@@ -155,147 +159,52 @@ namespace ApptentiveConnect
             {
                 return __apptentive_can_show_interaction(eventName);
             }
+
+            public bool CanShowMessageCenter
+            {
+                get { return __apptentive_can_show_message_center(); }
+            }
+
+            public bool CanShowInteraction(string eventName)
+            {
+                return __apptentive_can_show_interaction(eventName);
+            }
         }
 
         #elif UNITY_ANDROID
 
         class PlatformAndroid : IPlatform
         {
-            private readonly object logLock = new object();
-
-            private readonly jvalue[] args0 = new jvalue[0];
-            private readonly jvalue[] args3 = new jvalue[3];
-
-            private static readonly string PluginClassName = "spacemadness.com.lunarconsole.console.ConsolePlugin";
-
-            private readonly AndroidJavaClass pluginClass;
-
-            private readonly IntPtr pluginClassRaw;
-            private readonly IntPtr methodLogMessage;
-            private readonly IntPtr methodShowConsole;
-            private readonly IntPtr methodHideConsole;
-            private readonly IntPtr methodClearConsole;
-
             /// <summary>
             /// Initializes a new instance of the Android platform class.
             /// </summary>
             /// <param name="targetName">The name of the game object which will receive native callbacks</param>
             /// <param name="methodName">The method of the game object which will be called from the native code</param>
             /// <param name="version">Plugin version</param>
-            /// <param name="capacity">Console capacity (elements over this amount will be trimmed)</param>
-            /// <param name="trim">Console trim amount (how many elements will be trimmed on the overflow)</param>
-            /// <param name="gesture">Gesture name to activate the console</param>
-            public PlatformAndroid(string targetName, string methodName, string version, int capacity, int trim, string gesture)
+            /// <param name="APIKey">Apptentive API key</param>
+            public PlatformAndroid(string targetName, string methodName, string version, string APIKey)
             {
-                pluginClass = new AndroidJavaClass(PluginClassName);
-                pluginClassRaw = pluginClass.GetRawClass();
-
-                IntPtr methodInit = GetStaticMethod(pluginClassRaw, "init", "(Ljava.lang.String;Ljava.lang.String;Ljava.lang.String;IILjava.lang.String;)V");
-                CallStaticVoidMethod(methodInit, new jvalue[] {
-                    jval(targetName),
-                    jval(methodName),
-                    jval(version),
-                    jval(capacity),
-                    jval(trim),
-                    jval(gesture)
-                });
-
-                methodLogMessage = GetStaticMethod(pluginClassRaw, "logMessage", "(Ljava.lang.String;Ljava.lang.String;I)V");
-                methodShowConsole = GetStaticMethod(pluginClassRaw, "show", "()V");
-                methodHideConsole = GetStaticMethod(pluginClassRaw, "hide", "()V");
-                methodClearConsole = GetStaticMethod(pluginClassRaw, "clear", "()V");
             }
 
-            ~PlatformAndroid()
+            public bool Engage(string evt, IDictionary<string, object> customData)
             {
-                pluginClass.Dispose();
+                throw new NotImplementedException();
             }
-
-            #region IPlatform implementation
-            
-            public void OnLogMessageReceived(string message, string stackTrace, LogType type)
+            public bool PresentMessageCenter(IDictionary<string, object> customData)
             {
-                lock (logLock)
+                throw new NotImplementedException();
+            }
+            public bool CanShowInteraction(string eventName)
+            {
+                throw new NotImplementedException();
+            }
+            public bool CanShowMessageCenter
+            {
+                get
                 {
-                    args3[0] = jval(message);
-                    args3[1] = jval(stackTrace);
-                    args3[2] = jval((int)type);
-
-                    CallStaticVoidMethod(methodLogMessage, args3);
+                    throw new NotImplementedException();
                 }
             }
-
-            public bool ShowConsole()
-            {
-                try
-                {
-                    CallStaticVoidMethod(methodShowConsole, args0);
-                    return true;
-                }
-                catch (Exception)
-                {
-                    return false;
-                }
-            }
-
-            public bool HideConsole()
-            {
-                try
-                {
-                    CallStaticVoidMethod(methodHideConsole, args0);
-                    return true;
-                }
-                catch (Exception)
-                {
-                    return false;
-                }
-            }
-
-            public void ClearConsole()
-            {
-                try
-                {
-                    CallStaticVoidMethod(methodClearConsole, args0);
-                }
-                catch (Exception)
-                {
-                }
-            }
-
-            #endregion
-
-            #region Helpers
-
-            private static IntPtr GetStaticMethod(IntPtr classRaw, string name, string signature)
-            {
-                return AndroidJNIHelper.GetMethodID(classRaw, name, signature, true);
-            }
-
-            private void CallStaticVoidMethod(IntPtr method, jvalue[] args)
-            {
-                AndroidJNI.CallStaticVoidMethod(pluginClassRaw, method, args);
-            }
-
-            private bool CallStaticBoolMethod(IntPtr method, jvalue[] args)
-            {
-                return AndroidJNI.CallStaticBooleanMethod(pluginClassRaw, method, args);
-            }
-
-            private jvalue jval(string value)
-            {
-                jvalue val = new jvalue();
-                val.l = AndroidJNI.NewStringUTF(value);
-                return val;
-            }
-
-            private jvalue jval(int value)
-            {
-                jvalue val = new jvalue();
-                val.i = value;
-                return val;
-            }
-
-            #endregion
         }
 
         #endif // UNITY_ANDROID
@@ -353,6 +262,21 @@ namespace ApptentiveConnect
             return m_platform != null && m_platform.Engage(evt, customData);
         }
 
+        public bool PresentMessageCenter(IDictionary<string, object> customData = null)
+        {
+            return m_platform != null && m_platform.PresentMessageCenter(customData);
+        }
+
+        public bool CanShowInteraction(string eventName)
+        {
+            return m_platform != null && m_platform.CanShowInteraction(eventName);
+        }
+
+        public bool CanShowMessageCenter
+        {
+            get { return m_platform != null && m_platform.CanShowMessageCenter; }
+        }
+
         #endregion
 
         #region Properties
@@ -362,7 +286,7 @@ namespace ApptentiveConnect
         /// </summary>
         public static Apptentive sharedConnection
         {
-            get { throw new NotImplementedException(); }
+            get { return s_instance; } // FIXME: null safety
         }
 
         /// <summary>
@@ -383,7 +307,7 @@ namespace ApptentiveConnect
         /// </summary>
         public bool canShowMessageCenter
         {
-            get { throw new NotImplementedException(); }
+            get { return m_platform != null && m_platform.CanShowMessageCenter; }
         }
 
         #endregion

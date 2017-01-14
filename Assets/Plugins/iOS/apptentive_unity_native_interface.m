@@ -50,3 +50,8 @@ BOOL __apptentive_can_show_interaction(const char *eventNameStr)
     NSString *eventName = [[NSString alloc] initWithUTF8String:eventNameStr];
     return [_instance canShowInteractionForEvent:eventName];
 }
+
+BOOL __apptentive_can_show_message_center()
+{
+    return _instance.canShowMessageCenter;
+}
