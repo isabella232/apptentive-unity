@@ -14,26 +14,39 @@ static ApptentiveUnityPlugin * _instance;
 
 void __apptentive_initialize(const char *targetNameStr, const char *methodNameStr, const char *versionStr, const char *APIKeyStr)
 {
-    dispatch_async(dispatch_get_main_queue(), ^{
-        NSString *targetName = [[NSString alloc] initWithUTF8String:targetNameStr];
-        NSString *methodName = [[NSString alloc] initWithUTF8String:methodNameStr];
-        NSString *version = [[NSString alloc] initWithUTF8String:versionStr];
-        NSString *APIKey = [[NSString alloc] initWithUTF8String:APIKeyStr];
-        _instance = [[ApptentiveUnityPlugin alloc] initWithTargetName:targetName
-                                                           methodName:methodName
-                                                              version:version
-                                                               APIKey:APIKey];
-    });
-}
-
-BOOL __apptentive_engage(const char *eventName, const char *customData)
-{
-    return YES;
+    // FIXME: thread safety
+    NSString *targetName = [[NSString alloc] initWithUTF8String:targetNameStr];
+    NSString *methodName = [[NSString alloc] initWithUTF8String:methodNameStr];
+    NSString *version = [[NSString alloc] initWithUTF8String:versionStr];
+    NSString *APIKey = [[NSString alloc] initWithUTF8String:APIKeyStr];
+    _instance = [[ApptentiveUnityPlugin alloc] initWithTargetName:targetName
+                                                       methodName:methodName
+                                                          version:version
+                                                           APIKey:APIKey];
 }
 
 void __apptentive_destroy()
 {
-    dispatch_async(dispatch_get_main_queue(), ^{
-        _instance = nil;
-    });
+    // FIXME: thread safety
+    _instance = nil;
+}
+
+BOOL __apptentive_engage(const char *eventNameStr, const char *customDataStr)
+{
+    // FIXME: thread safety and custom data
+    NSString *eventName = [[NSString alloc] initWithUTF8String:eventNameStr];
+    return [_instance engage:eventName withCustomData:nil withExtendedData:nil];
+}
+
+BOOL __apptentive_present_message_center(const char *customData)
+{
+    // FIXME: thread safety and custom data
+    return [_instance presentMessageCenterWithCustomData:nil];
+}
+
+BOOL __apptentive_can_show_interaction(const char *eventNameStr)
+{
+    // FIXME: thread safety
+    NSString *eventName = [[NSString alloc] initWithUTF8String:eventNameStr];
+    return [_instance canShowInteractionForEvent:eventName];
 }

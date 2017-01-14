@@ -61,7 +61,7 @@ PluginImporter:
     iOS:
       enabled: 1
       settings:
-        CompileFlags: -ObjC
+        CompileFlags: 
         FrameworkDependencies: CoreData;CoreTelephony;MobileCoreServices;StoreKit;ImageIO;
   userData: 
   assetBundleName: 

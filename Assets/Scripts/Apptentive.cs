@@ -57,6 +57,14 @@ namespace ApptentiveConnect
             }
         }
 
+        void OnValidate()
+        {
+            if (string.IsNullOrEmpty(m_APIKey))
+            {
+                Debug.LogWarning("Missing Apptentive API key");
+            }
+        }
+
         #endregion
 
         #region Platforms
@@ -101,6 +109,8 @@ namespace ApptentiveConnect
         interface IPlatform
         {
             bool Engage(string evt, IDictionary<string, object> customData);
+            bool PresentMessageCenter(IDictionary<string, object> customData);
+            bool CanShowInteractionForEvent(string eventName);
         }
 
         #if UNITY_IOS || UNITY_IPHONE
@@ -111,7 +121,13 @@ namespace ApptentiveConnect
             private static extern void __apptentive_initialize(string targetName, string methodName, string version, string APIKey);
 
             [DllImport("__Internal")]
-            private static extern bool __apptentive_engage(string evt, string customData);
+            private static extern bool __apptentive_engage(string eventName, string customData);
+
+            [DllImport("__Internal")]
+            private static extern bool __apptentive_present_message_center(string customData);
+
+            [DllImport("__Internal")]
+            private static extern bool __apptentive_can_show_interaction(string customData);
             
             /// <summary>
             /// Initializes a new instance of the iOS platform class.
@@ -127,7 +143,17 @@ namespace ApptentiveConnect
 
             public bool Engage(string evt, IDictionary<string, object> customData)
             {
-                return __apptentive_engage(evt, ""); // FIXME: serialize custom data
+                return __apptentive_engage(evt, StringUtils.SerializeString(customData));
+            }
+
+            public bool PresentMessageCenter(IDictionary<string, object> customData)
+            {
+                return __apptentive_present_message_center(StringUtils.SerializeString(customData));
+            }
+
+            public bool CanShowInteractionForEvent(string eventName)
+            {
+                return __apptentive_can_show_interaction(eventName);
             }
         }
 

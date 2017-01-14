@@ -20,6 +20,11 @@ namespace ApptentiveConnectInternal
 
         public static IDictionary<string, string> DeserializeString(string data)
         {
+            if (string.IsNullOrEmpty(data))
+            {
+                return null;
+            }
+
             // can't use Json here since Unity doesn't support Json-to-Dictionary deserialization
             // don't want to use 3rd party so custom format it is
             var lines = data.Split('\n');
@@ -36,6 +41,11 @@ namespace ApptentiveConnectInternal
 
         public static string SerializeString(IDictionary<string, object> data)
         {
+            if (data == null || data.Count == 0)
+            {
+                return string.Empty;
+            }
+
             var result = new StringBuilder();
             var index = 0;
             foreach (var e in data)

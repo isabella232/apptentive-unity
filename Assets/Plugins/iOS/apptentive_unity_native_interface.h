@@ -17,4 +17,8 @@ OBJC_EXTERN void __apptentive_destroy(void);
 // engagements
 OBJC_EXTERN BOOL __apptentive_engage(const char *eventName, const char *customData);
 
+OBJC_EXTERN BOOL __apptentive_present_message_center(const char *customData);
+
+OBJC_EXTERN BOOL __apptentive_can_show_interaction(const char *eventName);
+
 #endif /* apptentive_unity_native_interface_h */
