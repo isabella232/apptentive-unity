@@ -10,8 +10,8 @@ using ApptentiveConnectInternal;
 
 namespace ApptentiveConnect
 {
-    delegate void LunarConsoleNativeMessageCallback(string message);
-    delegate void LunarConsoleNativeMessageHandler(IDictionary<string, string> data);
+    delegate void ApptentiveNativeMessageCallback(string message);
+    delegate void ApptentiveNativeMessageHandler(IDictionary<string, string> data);
 
     public sealed class Apptentive : MonoBehaviour
     {
@@ -23,7 +23,7 @@ namespace ApptentiveConnect
 
         IPlatform m_platform;
 
-        IDictionary<string, LunarConsoleNativeMessageHandler> m_nativeHandlerLookup;
+        IDictionary<string, ApptentiveNativeMessageHandler> m_nativeHandlerLookup;
 
         #region Life cycle
 
@@ -84,7 +84,7 @@ namespace ApptentiveConnect
             #if UNITY_IOS || UNITY_IPHONE
             if (Application.platform == RuntimePlatform.IPhonePlayer)
             {
-                LunarConsoleNativeMessageCallback callback = NativeMessageCallback;
+                ApptentiveNativeMessageCallback callback = NativeMessageCallback;
                 return new PlatformIOS(gameObject.name, callback.Method.Name, Constants.Version, APIKey);
             }
             #elif UNITY_ANDROID
@@ -288,7 +288,7 @@ namespace ApptentiveConnect
                 return;
             }
 
-            LunarConsoleNativeMessageHandler handler;
+            ApptentiveNativeMessageHandler handler;
             if (!nativeHandlerLookup.TryGetValue(name, out handler))
             {
                 Debug.LogError("Can't handle native callback: handler not found '" + name + "'");
@@ -305,34 +305,16 @@ namespace ApptentiveConnect
             }
         }
 
-        IDictionary<string, LunarConsoleNativeMessageHandler> nativeHandlerLookup
+        IDictionary<string, ApptentiveNativeMessageHandler> nativeHandlerLookup
         {
             get
             {
                 if (m_nativeHandlerLookup == null)
                 {
-                    m_nativeHandlerLookup = new Dictionary<string, LunarConsoleNativeMessageHandler>();
-                    m_nativeHandlerLookup["console_open"] = ConsoleOpenHandler;
-                    m_nativeHandlerLookup["console_close"] = ConsoleCloseHandler;
+                    m_nativeHandlerLookup = new Dictionary<string, ApptentiveNativeMessageHandler>();
                 }
 
                 return m_nativeHandlerLookup;
-            }
-        }
-
-        void ConsoleOpenHandler(IDictionary<string, string> data)
-        {
-            if (onConsoleOpened != null)
-            {
-                onConsoleOpened();
-            }
-        }
-
-        void ConsoleCloseHandler(IDictionary<string, string> data)
-        {
-            if (onConsoleClosed != null)
-            {
-                onConsoleClosed();
             }
         }
 
