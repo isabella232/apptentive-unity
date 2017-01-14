@@ -100,10 +100,7 @@ namespace ApptentiveConnect
 
         interface IPlatform
         {
-            void OnLogMessageReceived(string message, string stackTrace, LogType type);
-            bool ShowConsole();
-            bool HideConsole();
-            void ClearConsole();
+            bool Engage(string evt, IDictionary<string, object> customData);
         }
 
         #if UNITY_IOS || UNITY_IPHONE
@@ -112,6 +109,9 @@ namespace ApptentiveConnect
         {
             [DllImport("__Internal")]
             private static extern void __apptentive_initialize(string targetName, string methodName, string version, string APIKey);
+
+            [DllImport("__Internal")]
+            private static extern bool __apptentive_engage(string evt, string customData);
             
             /// <summary>
             /// Initializes a new instance of the iOS platform class.
@@ -123,6 +123,11 @@ namespace ApptentiveConnect
             public PlatformIOS(string targetName, string methodName, string version, string APIKey)
             {
                 __apptentive_initialize(targetName, methodName, version, APIKey);
+            }
+
+            public bool Engage(string evt, IDictionary<string, object> customData)
+            {
+                return __apptentive_engage(evt, ""); // FIXME: serialize custom data
             }
         }
 
@@ -333,107 +338,12 @@ namespace ApptentiveConnect
 
         #endregion
 
-        #region Operations
+        #region Public interface
 
-        /// <summary>
-        /// Shows Lunar console on top of everything. Does nothing if platform is not supported or if plugin is not initizlied.
-        /// </summary>
-        public static void Show()
+        public bool Engage(string evt, IDictionary<string, object> customData = null)
         {
-#if LUNAR_CONSOLE_PLATFORM_SUPPORTED
-        #if LUNAR_CONSOLE_ENABLED
-            if (s_instance != null)
-            {
-                s_instance.ShowConsole();
-            }
-            else
-            {
-                Debug.LogError("Can't show " + Constants.PluginName + ": instance is not initialized. Make sure you've installed it correctly");
-            }
-        #else
-            Debug.LogWarning("Can't show " + Constants.PluginName + ": plugin is disabled");
-        #endif
-#else
-            Debug.LogWarning("Can't show " + Constants.PluginName + ": current platform is not supported");
-#endif
+            return m_platform != null && m_platform.Engage(evt, customData);
         }
-
-        /// <summary>
-        /// Hides Lunar console. Does nothing if platform is not supported or if plugin is not initizlied.
-        /// </summary>
-        public static void Hide()
-        {
-#if LUNAR_CONSOLE_PLATFORM_SUPPORTED
-        #if LUNAR_CONSOLE_ENABLED
-            if (s_instance != null)
-            {
-                s_instance.HideConsole();
-            }
-            else
-            {
-                Debug.LogError("Can't hide " + Constants.PluginName + ": instance is not initialized. Make sure you've installed it correctly");
-            }
-        #else
-            Debug.LogWarning("Can't hide " + Constants.PluginName + ": plugin is disabled");
-        #endif
-#else
-            Debug.LogWarning("Can't hide " + Constants.PluginName + ": current platform is not supported");
-#endif
-        }
-
-        /// <summary>
-        /// Clears Lunar console. Does nothing if platform is not supported or if plugin is not initizlied.
-        /// </summary>
-        public static void Clear()
-        {
-#if LUNAR_CONSOLE_PLATFORM_SUPPORTED
-        #if LUNAR_CONSOLE_ENABLED
-            if (s_instance != null)
-            {
-                s_instance.ClearConsole();
-            }
-            else
-            {
-                Debug.LogError("Can't clear " + Constants.PluginName + ": instance is not initialized. Make sure you've installed it correctly");
-            }
-        #else
-            Debug.LogWarning("Can't clear " + Constants.PluginName + ": plugin is disabled");
-        #endif
-#else
-            Debug.LogWarning("Can't clear " + Constants.PluginName + ": current platform is not supported");
-#endif
-        }
-
-        public static Action onConsoleOpened { get; set; }
-        public static Action onConsoleClosed { get; set; }
-
-        #if LUNAR_CONSOLE_ENABLED
-
-        void ShowConsole()
-        {
-            if (m_platform != null)
-            {
-                m_platform.ShowConsole();
-            }
-        }
-
-        void HideConsole()
-        {
-            if (m_platform != null)
-            {
-                m_platform.HideConsole();
-            }
-        }
-
-        void ClearConsole()
-        {
-            if (m_platform != null)
-            {
-                m_platform.ClearConsole();
-            }
-        }
-
-        #endif // LUNAR_CONSOLE_ENABLED
 
         #endregion
 
@@ -454,7 +364,18 @@ namespace ApptentiveConnect
         public String APIKey
         {
             get { return m_APIKey; }
-            set { m_APIKey = value; }
+        }
+
+        /// <summary>
+        /// Determines if Message Center will be displayed when `presentMessageCenterFromViewController:` is called.
+        ///
+        /// If app has not yet synced with Apptentive, you will be unable to display Message Center. Use `canShowMessageCenter`
+        /// to determine if Message Center is ready to be displayed. If Message Center is not ready you could, for example,
+        /// hide the "Message Center" button in your interface.
+        /// </summary>
+        public bool canShowMessageCenter
+        {
+            get { throw new NotImplementedException(); }
         }
 
         #endregion
