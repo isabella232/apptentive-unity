@@ -1,0 +1,587 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <attr format="reference" name="apptentiveAvatarStyle"/>
+    <attr format="reference" name="apptentiveMessageCenterBadgeStyle"/>
+    <color name="apptentive_activity_frame_dark">#42000000</color>
+    <color name="apptentive_activity_frame_light">#42000000</color>
+    <color name="apptentive_attenuate_color_dark">#06FFFFFF</color>
+    <color name="apptentive_attenuate_color_light">#06000000</color>
+    <color name="apptentive_brand_red">#DC2636</color>
+    <color name="apptentive_card_background_dark">#202020</color>
+    <color name="apptentive_card_background_light">#FAFAFA</color>
+    <color name="apptentive_card_border_color_dark">#1FFFFFFF</color>
+    <color name="apptentive_card_border_color_light">#1F000000</color>
+    <color name="apptentive_color_accent">#1E88E5</color>
+    <color name="apptentive_color_background_dark">#616161</color>
+    <color name="apptentive_color_background_light">#F5F5F5</color>
+    <color name="apptentive_color_primary">#F44336</color>
+    <color name="apptentive_color_primary_dark">#D32F2F</color>
+    <color name="apptentive_color_primary_light">#E57373</color>
+    <color name="apptentive_color_snackbar">#323232</color>
+    <color name="apptentive_material_white">#FFFFFFFF</color>
+    <color name="apptentive_text_color_hint_dark">#80ffffff</color>
+    <color name="apptentive_text_color_hint_inverse_dark">#80000000</color>
+    <color name="apptentive_text_color_hint_inverse_light">#80ffffff</color>
+    <color name="apptentive_text_color_hint_light">#80000000</color>
+    <color name="apptentive_text_color_primary_dark">#FFFFFF</color>
+    <color name="apptentive_text_color_primary_light">#000000</color>
+    <color name="apptentive_text_color_secondary_dark">#E0E0E0</color>
+    <color name="apptentive_text_color_secondary_light">#9E9E9E</color>
+    <color name="apptentive_validation_failed_color">#D93849</color>
+    <declare-styleable name="ApptentiveAvatarView"><attr format="dimension" name="apptentive_borderWidth"/><attr format="dimension" name="apptentive_borderSpace"/><attr format="color" name="apptentive_borderColor"/></declare-styleable>
+    <declare-styleable name="ApptentiveMaterialDeterminateProgressBar"><attr format="color" name="apptentive_backgroundColor"/><attr format="color" name="apptentive_progressBarColor"/><attr format="integer" name="apptentive_progress"/></declare-styleable>
+    <declare-styleable name="ApptentiveMessageCenterBadge"><attr format="color|reference" name="apptentive_counterColor"/><attr format="enum" name="apptentive_badgeSize">
+            
+            <enum name="normal" value="0"/>
+            
+            <enum name="mini" value="1"/>
+        </attr></declare-styleable>
+    <declare-styleable name="ApptentiveThemeTemplate"><attr format="color|reference" name="apptentiveWindowBackground"/><attr format="color|reference" name="apptentiveViewBackground"/><attr format="color|reference" name="apptentiveCardBackground"/><attr format="reference" name="apptentiveDialogBackground"/><attr format="reference" name="apptentiveComposingAreaBackground"/><attr format="reference" name="apptentiveComposingBarBackground"/><attr format="reference" name="apptentiveAttachmentItemBackground"/><attr format="color|reference" name="apptentiveCardBorderColor"/><attr format="color|reference" name="apptentiveAttenuateColor"/><attr format="color|reference" name="apptentiveToolbarBackground"/><attr format="reference" name="apptentiveToolbarTheme"/><attr format="reference" name="apptentiveToolbarPopupTheme"/><attr format="reference" name="apptentiveToolbarTitleTextAppearance"/><attr format="reference" name="apptentiveToolbarIconClose"/><attr format="reference" name="apptentiveToolbarIconProfile"/><attr format="reference" name="apptentiveCheckBoxStyle"/><attr format="reference" name="apptentiveRadioButtonStyle"/><attr format="reference" name="apptentiveFabStyle"/><attr format="reference" name="apptentiveInteractionButtonStyle"/><attr format="color|reference" name="apptentiveInteractionButtonColorStateList"/><attr format="color|reference" name="apptentiveInteractionButtonColorDefault"/><attr format="color|reference" name="apptentiveInteractionButtonColorHighlighted"/><attr format="color|reference" name="apptentiveInteractionButtonColorDisabled"/><attr format="color|reference" name="apptentiveValidationFailedColor"/><attr format="color|reference" name="apptentiveSurveySentToastActionColor"/><attr format="color|reference" name="apptentiveExtendedHeaderForegroundColor"/><attr format="color|reference" name="apptentiveButtonTintColor"/><attr format="color|reference" name="apptentiveButtonTintColorDisabled"/><attr format="color|reference" name="apptentiveButtonTintColorStateList"/><attr format="dimension|reference" name="apptentiveTextSizeHeadline"/><attr format="dimension|reference" name="apptentiveTextSizeTitle"/><attr format="dimension|reference" name="apptentiveTextSizeSubhead"/><attr format="dimension|reference" name="apptentiveTextSizeBody1"/><attr format="dimension|reference" name="apptentiveTextSizeBody2"/><attr format="dimension|reference" name="apptentiveTextSizeCaption"/><attr format="dimension|reference" name="apptentiveTextSizeButtonBorderless"/><attr format="dimension|reference" name="apptentiveTextSizeButtonColored"/><attr format="integer|reference" name="apptentiveTypefaceDefault"/><attr format="integer|reference" name="apptentiveTypefaceToolbar"/><attr format="integer|reference" name="apptentiveTypefaceHeadline"/><attr format="integer|reference" name="apptentiveTypefaceTitle"/><attr format="integer|reference" name="apptentiveTypefaceSubhead"/><attr format="integer|reference" name="apptentiveTypefaceBody1"/><attr format="integer|reference" name="apptentiveTypefaceBody2"/><attr format="integer|reference" name="apptentiveTypefaceCaption"/><attr format="integer|reference" name="apptentiveTypefaceButtonBorderless"/><attr format="integer|reference" name="apptentiveTypefaceButtonColored"/><attr format="string|reference" name="apptentiveFontFamilyDefault"/><attr format="string|reference" name="apptentiveFontFamilyMediumDefault"/><attr format="string|reference" name="apptentiveFontFamilyToolbar"/><attr format="string|reference" name="apptentiveFontFamilyHeadline"/><attr format="string|reference" name="apptentiveFontFamilyTitle"/><attr format="string|reference" name="apptentiveFontFamilySubhead"/><attr format="string|reference" name="apptentiveFontFamilyBody1"/><attr format="string|reference" name="apptentiveFontFamilyBody2"/><attr format="string|reference" name="apptentiveFontFamilyCaption"/><attr format="string|reference" name="apptentiveFontFamilyButtonBorderless"/><attr format="string|reference" name="apptentiveFontFamilyButtonColored"/><attr format="dimension|reference" name="apptentiveCardElevation"/><attr format="reference" name="apptentiveAvatarViewGreetingStyle"/><attr format="reference" name="apptentiveAvatarViewMessageStyle"/><attr format="reference" name="apptentiveSurveySentToastStyle"/></declare-styleable>
+    <dimen name="apptentive_activity_side_padding">0dp</dimen>
+    <dimen name="apptentive_activity_side_padding_enjoyment">@dimen/apptentive_activity_side_padding</dimen>
+    <dimen name="apptentive_activity_side_padding_note">@dimen/apptentive_activity_side_padding</dimen>
+    <dimen name="apptentive_activity_side_padding_rating">@dimen/apptentive_activity_side_padding</dimen>
+    <dimen name="apptentive_activity_side_padding_survey">@dimen/apptentive_activity_side_padding</dimen>
+    <dimen name="apptentive_activity_side_padding_upgrade">@dimen/apptentive_activity_side_padding</dimen>
+    <dimen name="apptentive_activity_vertical_padding">0dp</dimen>
+    <dimen name="apptentive_card_view_gap_horizontal">4dp</dimen>
+    <dimen name="apptentive_card_view_gap_vertical">4dp</dimen>
+    <dimen name="apptentive_dialog_background_corner_radius">1.5dp</dimen>
+    <dimen name="apptentive_dialog_body_text">16sp</dimen>
+    <dimen name="apptentive_dialog_button_bar_padding_right">12dp</dimen>
+    <dimen name="apptentive_dialog_button_click_area_height">48dp</dimen>
+    <dimen name="apptentive_dialog_button_corner_radius">1.5dp</dimen>
+    <dimen name="apptentive_dialog_button_margin_left">4dp</dimen>
+    <dimen name="apptentive_dialog_button_margin_right">4dp</dimen>
+    <dimen name="apptentive_dialog_button_padding_left">8dp</dimen>
+    <dimen name="apptentive_dialog_button_padding_right">8dp</dimen>
+    <dimen name="apptentive_dialog_button_spacing">8dp</dimen>
+    <dimen name="apptentive_dialog_button_text">15sp</dimen>
+    <dimen name="apptentive_dialog_button_visible_area_min_height">36dp</dimen>
+    <dimen name="apptentive_dialog_button_visible_area_min_width">64dp</dimen>
+    <dimen name="apptentive_dialog_buttons_padding_bottom">8dp</dimen>
+    <dimen name="apptentive_dialog_buttons_padding_top">8dp</dimen>
+    <dimen name="apptentive_dialog_content_spacing">16dp</dimen>
+    <dimen name="apptentive_dialog_edittext">16sp</dimen>
+    <dimen name="apptentive_dialog_side_padding">0dp</dimen>
+    <dimen name="apptentive_dialog_title_text">21dp</dimen>
+    <dimen name="apptentive_dialog_vertical_padding">0dp</dimen>
+    <dimen name="apptentive_image_file_extension_default_text_size">12sp</dimen>
+    <dimen name="apptentive_image_file_extension_layout_top">24dp</dimen>
+    <dimen name="apptentive_image_grid_space_size">3dp</dimen>
+    <dimen name="apptentive_image_thumbnail_default_size">160dp</dimen>
+    <dimen name="apptentive_interaction_card_list_width">@integer/match_parent</dimen>
+    <dimen name="apptentive_interaction_extended_toolbar_margin_end">60dp</dimen>
+    <dimen name="apptentive_interaction_extended_toolbar_margin_start">60dp</dimen>
+    <dimen name="apptentive_interaction_extended_toolbar_width">@integer/wrap_content</dimen>
+    <dimen name="apptentive_message_center_avatar_image_diameter">48dp</dimen>
+    <dimen name="apptentive_message_center_badge_mini">8sp</dimen>
+    <dimen name="apptentive_message_center_badge_normal">14sp</dimen>
+    <dimen name="apptentive_message_center_bottom_padding">60dp</dimen>
+    <dimen name="apptentive_message_center_card_control_margin">8dp</dimen>
+    <dimen name="apptentive_message_center_card_view_composing_margin_bottom">4dp</dimen>
+    <dimen name="apptentive_message_center_card_view_composing_margin_side">8dp</dimen>
+    <dimen name="apptentive_message_center_card_view_composing_margin_top">4dp</dimen>
+    <dimen name="apptentive_message_center_card_view_margin_side">16dp</dimen>
+    <dimen name="apptentive_message_center_composing_bar_min_height">40dp</dimen>
+    <dimen name="apptentive_message_center_default_margin_medium">16dp</dimen>
+    <dimen name="apptentive_message_center_default_margin_small">8dp</dimen>
+    <dimen name="apptentive_message_center_error_side_margin">24dp</dimen>
+    <dimen name="apptentive_message_center_fab_margin_bottom">20dp</dimen>
+    <dimen name="apptentive_message_center_fab_margin_side">16dp</dimen>
+    <dimen name="apptentive_message_center_footer_height">32dp</dimen>
+    <dimen name="apptentive_message_center_greeting_side_margin">24dp</dimen>
+    <dimen name="apptentive_message_center_greeting_text_padding_start">26dp</dimen>
+    <dimen name="apptentive_message_center_header_height">56dp</dimen>
+    <dimen name="apptentive_message_center_icon_dimension">48dp</dimen>
+    <dimen name="apptentive_message_center_message_list_margin_side">0dp</dimen>
+    <dimen name="apptentive_message_center_message_list_side_border">0dp</dimen>
+    <dimen name="apptentive_message_center_status_side_padding">32dp</dimen>
+    <dimen name="apptentive_text_button_padding_left">12dp</dimen>
+    <dimen name="apptentive_text_button_padding_right">12dp</dimen>
+    <dimen name="apptentive_text_large">22sp</dimen>
+    <dimen name="apptentive_text_medium">18sp</dimen>
+    <dimen name="apptentive_text_medium_large">20sp</dimen>
+    <dimen name="apptentive_text_medium_small">16sp</dimen>
+    <dimen name="apptentive_text_size_body_1">14sp</dimen>
+    <dimen name="apptentive_text_size_body_2">14sp</dimen>
+    <dimen name="apptentive_text_size_button">14sp</dimen>
+    <dimen name="apptentive_text_size_caption">12sp</dimen>
+    <dimen name="apptentive_text_size_headline">24sp</dimen>
+    <dimen name="apptentive_text_size_subhead">16sp</dimen>
+    <dimen name="apptentive_text_size_title">20sp</dimen>
+    <dimen name="apptentive_text_small">14sp</dimen>
+    <dimen name="apptentive_text_small_tiny">12sp</dimen>
+    <dimen name="floating_action_button_elevation">4dp</dimen>
+    <dimen name="floating_action_button_margin_mini">26dp</dimen>
+    <dimen name="floating_action_button_margin_mini_minus">-26dp</dimen>
+    <dimen name="floating_action_button_margin_normal">34dp</dimen>
+    <dimen name="floating_action_button_margin_normal_minus">-34dp</dimen>
+    <dimen name="floating_action_button_shadow_radius">4dp</dimen>
+    <dimen name="floating_action_button_size_mini">40dp</dimen>
+    <dimen name="floating_action_button_size_normal">56dp</dimen>
+    <item name="apptentive_drawable_downloader" type="id"/>
+    <item name="apptentive_message_center_view" type="id"/>
+    <item name="apptentive_survey_answer_id" type="id"/>
+    <item name="apptentive_survey_answer_index" type="id"/>
+    <item name="apptentive_survey_question_id" type="id"/>
+    <integer name="apptentive_gravity_center">17</integer>
+    <integer name="apptentive_gravity_left">3</integer>
+    <integer name="apptentive_gravity_start">0x00800003</integer>
+    <integer name="apptentive_image_grid_default_attachments_total">4</integer>
+    <integer name="apptentive_image_grid_default_column_number">4</integer>
+    <integer name="apptentive_image_grid_default_column_number_incoming">3</integer>
+    <integer name="apptentive_layout_height_for_weight">@integer/wrap_content</integer>
+    <integer name="apptentive_layout_width_for_weight">@integer/match_parent</integer>
+    <integer name="apptentive_message_center_status_text_gravity">@integer/apptentive_gravity_center</integer>
+    <integer name="apptentive_orientation_fill_length">@integer/apptentive_orientation_vertical</integer>
+    <integer name="apptentive_orientation_horizontal">0</integer>
+    <integer name="apptentive_orientation_vertical">1</integer>
+    <integer name="apptentive_typeface_monospace">3</integer>
+    <integer name="apptentive_typeface_normal">0</integer>
+    <integer name="apptentive_typeface_sans">1</integer>
+    <integer name="apptentive_typeface_serif">2</integer>
+    <integer name="match_parent">-1</integer>
+    <integer name="wrap_content">-2</integer>
+    <string name="apptentive_about_description">Apptentive is a feedback and communication service which allows the people who make this app to quickly get your feedback and better listen to you.</string>
+    <string name="apptentive_about_description_link">Find out more at apptentive.com</string>
+    <string name="apptentive_about_privacy">Your feedback is hosted by Apptentive and is subject to Apptentive\'s privacy policy and the privacy policy of the developer of this app.</string>
+    <string name="apptentive_about_privacy_link">Visit Apptentive\'s Privacy Policy</string>
+    <string name="apptentive_about_title">About Apptentive</string>
+    <string name="apptentive_dismiss_placeholder">Dismiss</string>
+    <string name="apptentive_do_you_love_this_app">Do you love %s?</string>
+    <string name="apptentive_email">Email</string>
+    <string name="apptentive_failed">Failed</string>
+    <string name="apptentive_font_family_default_material">sans-serif</string>
+    <string name="apptentive_font_family_default_medium_material">sans-serif-medium</string>
+    <string name="apptentive_instruction_text_separator"> – </string>
+    <string name="apptentive_message_center_attachments_list">Attachments list</string>
+    <string name="apptentive_message_center_content_description_attach_button">Attach</string>
+    <string name="apptentive_message_center_content_description_attachment">Attachment</string>
+    <string name="apptentive_message_center_content_description_attachment_add">Add attachment</string>
+    <string name="apptentive_message_center_content_description_attachment_delete">Delete attachment</string>
+    <string name="apptentive_message_center_content_description_attachments_list">Attachments list</string>
+    <string name="apptentive_message_center_content_description_close_button">Close</string>
+    <string name="apptentive_message_center_content_description_send_button">Send</string>
+    <string name="apptentive_message_center_fab_content_description">Write a message</string>
+    <string name="apptentive_message_center_no_connection">Please connect to the internet to send feedback.</string>
+    <string name="apptentive_message_center_server_error">It looks like we\'re having trouble accessing feedback. Please wait a bit and try again.</string>
+    <string name="apptentive_message_center_title">Message Center</string>
+    <string name="apptentive_name">Name</string>
+    <string name="apptentive_no">No</string>
+    <string name="apptentive_no_thanks">No thanks</string>
+    <string name="apptentive_ok">OK</string>
+    <string name="apptentive_oops">Oops!</string>
+    <string name="apptentive_optional">Optional</string>
+    <string name="apptentive_powered_by_apptentive">Powered by</string>
+    <string name="apptentive_rate_this_app">Rate %s</string>
+    <string name="apptentive_rating_error">We\'re unable to find this app in the store. Please visit the store to find and rate it.</string>
+    <string name="apptentive_rating_message_fs">We\'re so happy to hear that you love %s! It\'d be really helpful if you rated us. Thanks so much for spending some time with us.</string>
+    <string name="apptentive_rating_provider_no_amazon_appstore">Amazon Appstore was not found. Please install Amazon Appstore before rating this app.</string>
+    <string name="apptentive_rating_provider_no_google_play">Google Play was not found. Please install Google Play before rating this app.</string>
+    <string name="apptentive_rating_provider_no_mikandi">MiKandi Market was not found. Please install MiKandi Market before rating this app.</string>
+    <string name="apptentive_rating_remind">Remind Me Later</string>
+    <string name="apptentive_required">Required</string>
+    <string name="apptentive_sent">Sent</string>
+    <string name="apptentive_survey_send_response">Send Response</string>
+    <string name="apptentive_survey_singleline_hint">Enter an answer…</string>
+    <string name="apptentive_thank_you">Thank You</string>
+    <string name="apptentive_thanks">Thanks!</string>
+    <string name="apptentive_version">Apptentive Version %s</string>
+    <string name="apptentive_yes">Yes</string>
+    <style name="Apptentive"/>
+    <style name="Apptentive.MessageCenterMessageFrame">
+        <item name="android:paddingTop">?attr/apptentiveCardElevation</item>
+        <item name="android:paddingLeft">@dimen/apptentive_message_center_message_list_margin_side</item>
+        <item name="android:paddingRight">@dimen/apptentive_message_center_message_list_margin_side</item>
+        <item name="android:clipToPadding">false</item>
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:orientation">vertical</item>
+    </style>
+    <style name="Apptentive.MessageCenterMessageOutgoingProgressBar">
+        <item name="android:layout_marginTop">5dp</item>
+        <item name="apptentive_progressBarColor">?attr/colorAccent</item>
+    </style>
+    <style name="Apptentive.Style"/>
+    <style name="Apptentive.Style.AlertDialog" parent="Apptentive.Style.Dialog">
+        <item name="android:windowMinWidthMajor">@android:dimen/dialog_min_width_major</item>
+        <item name="android:windowMinWidthMinor">@android:dimen/dialog_min_width_minor</item>
+    </style>
+    <style name="Apptentive.Style.Dialog" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="colorPrimary">@color/apptentive_color_primary</item>
+        <item name="colorPrimaryDark">@color/apptentive_color_primary_dark</item>
+        <item name="colorAccent">@color/apptentive_color_accent</item>
+        <item name="android:textColorPrimary">@color/apptentive_text_color_primary_light</item>
+        <!-- Used for the background -->
+    </style>
+    <style name="Apptentive.Style.TextView.Timestamp" parent="">
+        <item name="android:minHeight">70dp</item>
+        <item name="android:paddingLeft">16dp</item>
+        <item name="android:paddingStart">16dp</item>
+        <item name="android:paddingBottom">12dp</item>
+        <item name="android:gravity">start|bottom</item>
+    </style>
+    <style name="Apptentive.Style.Toolbar" parent="Widget.AppCompat.Toolbar">
+        <item name="android:background">?apptentiveToolbarBackground</item>
+        <item name="popupTheme">?apptentiveToolbarPopupTheme</item>
+        <item name="theme">?apptentiveToolbarTheme</item>
+        <item name="titleTextAppearance">?apptentiveToolbarTitleTextAppearance</item>
+    </style>
+    <style name="Apptentive.Style.Widget" parent="android:Widget"/>
+    <style name="Apptentive.Style.Widget.AvatarView">
+        <item name="android:src">@drawable/avatar</item>
+    </style>
+    <style name="Apptentive.Style.Widget.AvatarView.Greeting">
+        <item name="apptentive_borderColor">?attr/apptentiveExtendedHeaderForegroundColor</item>
+        <item name="apptentive_borderWidth">2dp</item>
+        <item name="apptentive_borderSpace">1.5dp</item>
+    </style>
+    <style name="Apptentive.Style.Widget.AvatarView.Message">
+        <item name="apptentive_borderColor">?attr/colorAccent</item>
+    </style>
+    <style name="Apptentive.Style.Widget.Badge">
+        <item name="apptentive_badgeSize">normal</item>
+        <item name="apptentive_counterColor">?android:attr/textColorPrimary</item>
+    </style>
+    <style name="Apptentive.Style.Widget.Button.Colored" parent="Widget.AppCompat.Button.Colored">
+        <item name="android:typeface">?attr/apptentiveTypefaceButtonColored</item>
+        <item name="android:textSize">?attr/apptentiveTextSizeButtonColored</item>
+    </style>
+    <style name="Apptentive.Style.Widget.CardContent"/>
+    <style name="Apptentive.Style.Widget.CardView" parent="CardView">
+        <item name="android:layout_margin">0dp</item>
+        <item name="android:padding">0dp</item>
+    </style>
+    <style name="Apptentive.Style.Widget.CardView.Composing">
+        <item name="android:layout_margin">0dp</item>
+        <item name="android:padding">0dp</item>
+    </style>
+    <style name="Apptentive.Style.Widget.CardView.Message">
+        <item name="cardBackgroundColor">?attr/apptentiveCardBackground</item>
+        <item name="cardElevation">?attr/apptentiveCardElevation</item>
+    </style>
+    <style name="Apptentive.Style.Widget.CardView.Survey">
+        <item name="cardUseCompatPadding">true</item>
+        <item name="cardBackgroundColor">?attr/apptentiveCardBackground</item>
+        <item name="cardCornerRadius">2dp</item>
+        <item name="cardElevation">?attr/apptentiveCardElevation</item>
+    </style>
+    <style name="Apptentive.Style.Widget.Divider">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">2dp</item>
+        <item name="android:background">?android:attr/listDivider</item>
+    </style>
+    <style name="Apptentive.Style.Widget.FloatingActionButton">
+        <item name="fabSize">normal</item>
+        <item name="android:layout_gravity">bottom|end</item>
+        <item name="android:layout_margin">@dimen/apptentive_message_center_fab_margin_side</item>
+        <item name="android:layout_marginBottom">@dimen/apptentive_message_center_fab_margin_bottom</item>
+    </style>
+    <style name="Apptentive.Style.Widget.ImageButton" parent="Widget.AppCompat.ImageButton"/>
+    <style name="Apptentive.Style.Widget.ImageButton.Composing">
+        <item name="android:background">?android:attr/selectableItemBackground</item>
+        <item name="android:tint">?attr/colorAccent</item>
+        <item name="android:scaleType">fitCenter</item>
+    </style>
+    <style name="Apptentive.Style.Widget.ImageButton.Dialog.Close" parent="Apptentive.Style.Widget.ImageButton">
+        <item name="android:background">?android:attr/selectableItemBackground</item>
+        <item name="android:tint">?attr/colorAccent</item>
+        <item name="android:scaleType">fitCenter</item>
+    </style>
+    <style name="Apptentive.Style.Widget.ImageButton.Info">
+        <item name="android:contentDescription">@string/apptentive_about_title</item>
+        <item name="android:background">?android:attr/selectableItemBackground</item>
+        <item name="android:src">@drawable/apptentive_ic_info</item>
+        <item name="android:tint">?attr/apptentiveExtendedHeaderForegroundColor</item>
+    </style>
+    <style name="Apptentive.Style.Widget.SurveySentToast" parent="Widget.Design.Snackbar">
+        <item name="android:paddingTop">@dimen/design_snackbar_padding_vertical</item>
+        <item name="android:paddingBottom">@dimen/design_snackbar_padding_vertical</item>
+    </style>
+    <style name="Apptentive.TextAppearance.Body1" parent="@style/TextAppearance.AppCompat.Body1">
+        <item name="android:typeface">?attr/apptentiveTypefaceBody1</item>
+        <item name="android:textSize">?attr/apptentiveTextSizeBody1</item>
+    </style>
+    <style name="Apptentive.TextAppearance.Body2" parent="@style/TextAppearance.AppCompat.Body2">
+        <item name="android:typeface">?attr/apptentiveTypefaceBody2</item>
+        <item name="android:textSize">?attr/apptentiveTextSizeBody2</item>
+    </style>
+    <style name="Apptentive.TextAppearance.Caption" parent="@style/TextAppearance.AppCompat.Caption">
+        <item name="android:typeface">?attr/apptentiveTypefaceCaption</item>
+        <item name="android:textSize">?attr/apptentiveTextSizeCaption</item>
+    </style>
+    <style name="Apptentive.TextAppearance.Caption.Bold">
+        <item name="android:textStyle">bold</item>
+    </style>
+    <style name="Apptentive.TextAppearance.Headline" parent="@style/TextAppearance.AppCompat.Headline">
+        <item name="android:typeface">?attr/apptentiveTypefaceHeadline</item>
+        <item name="android:textSize">?attr/apptentiveTextSizeHeadline</item>
+    </style>
+    <style name="Apptentive.TextAppearance.Headline.Inverse">
+        <item name="android:textColor">?android:attr/textColorPrimaryInverse</item>
+        <item name="android:textColorHint">?android:attr/textColorHintInverse</item>
+        <item name="android:textColorHighlight">?android:attr/textColorHighlightInverse</item>
+        <item name="android:textColorLink">?android:attr/textColorLinkInverse</item>
+
+    </style>
+    <style name="Apptentive.TextAppearance.Subhead" parent="@style/TextAppearance.AppCompat.Subhead">
+        <item name="android:typeface">?attr/apptentiveTypefaceSubhead</item>
+        <item name="android:textSize">?attr/apptentiveTextSizeSubhead</item>
+    </style>
+    <style name="Apptentive.TextAppearance.Subhead.Inverse" parent="@style/TextAppearance.AppCompat.Subhead.Inverse">
+        <item name="android:typeface">?attr/apptentiveTypefaceSubhead</item>
+        <item name="android:textSize">?attr/apptentiveTextSizeSubhead</item>
+    </style>
+    <style name="Apptentive.TextAppearance.Subhead.Secondary">
+        <item name="android:typeface">?attr/apptentiveTypefaceSubhead</item>
+        <item name="android:textSize">?attr/apptentiveTextSizeSubhead</item>
+        <item name="android:textColor">?android:attr/textColorSecondary</item>
+    </style>
+    <style name="Apptentive.TextAppearance.Subhead.Secondary.Inverse" parent="Apptentive.TextAppearance.Subhead.Inverse">
+        <item name="android:textColor">?android:attr/textColorSecondaryInverse</item>
+    </style>
+    <style name="Apptentive.TextAppearance.Subhead.SnackBar" parent="@style/Apptentive.TextAppearance.Subhead">
+        <item name="android:textColor">#FFFFFF</item>
+    </style>
+    <style name="Apptentive.TextAppearance.Title" parent="@style/TextAppearance.AppCompat.Title">
+        <item name="android:typeface">?attr/apptentiveTypefaceTitle</item>
+        <item name="android:textSize">?attr/apptentiveTextSizeTitle</item>
+    </style>
+    <style name="Apptentive.TextAppearance.Toolbar" parent="@style/TextAppearance.Widget.AppCompat.Toolbar.Title">
+        <item name="android:typeface">?attr/apptentiveTypefaceToolbar</item>
+    </style>
+    <style name="Apptentive.Widget.Button.Borderless" parent="Widget.AppCompat.Button.Borderless">
+        <item name="android:typeface">?attr/apptentiveTypefaceButtonBorderless</item>
+        <item name="android:textColor">?attr/apptentiveInteractionButtonColorDefault</item>
+        <item name="android:textSize">?attr/apptentiveTextSizeButtonBorderless</item>
+        <item name="android:background">?android:attr/selectableItemBackground</item>
+        <item name="android:minWidth">36dp</item>
+        <item name="android:paddingLeft">8dp</item>
+        <item name="android:paddingRight">8dp</item>
+    </style>
+    <style name="Apptentive.Widget.CheckBox" parent="Widget.AppCompat.CompoundButton.CheckBox">
+        <item name="android:textColor">?android:attr/textColorPrimary</item>
+        <item name="android:typeface">?attr/apptentiveTypefaceBody1</item>
+        <item name="android:textSize">?attr/apptentiveTextSizeBody1</item>
+    </style>
+    <style name="Apptentive.Widget.RadioButton" parent="Widget.AppCompat.CompoundButton.RadioButton">
+        <item name="android:textColor">?android:attr/textColorPrimary</item>
+        <item name="android:typeface">?attr/apptentiveTypefaceBody1</item>
+        <item name="android:textSize">?attr/apptentiveTextSizeBody1</item>
+    </style>
+    <style name="ApptentiveBaseDialogTheme">
+        <item name="android:windowBackground">?attr/apptentiveWindowBackground</item>
+    </style>
+    <style name="ApptentiveBaseFrameTheme">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:colorBackgroundCacheHint">@null</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowIsFloating">false</item>
+        <item name="windowActionBarOverlay">false</item>
+        <item name="actionBarPopupTheme">@null</item>
+        <item name="actionBarTheme">@null</item>
+        <item name="android:windowAnimationStyle">@android:style/Animation.Dialog</item>
+        <!-- Requires API 11 -->
+        <item name="android:dialogTheme">@style/Apptentive.Style.Dialog</item>
+        <item name="alertDialogTheme">@style/Apptentive.Style.AlertDialog</item>
+    </style>
+    <style name="ApptentiveDefaultTheme.Dark" parent="Theme.AppCompat.NoActionBar">
+        <item name="apptentiveToolbarPopupTheme">@style/ThemeOverlay.AppCompat.Dark</item>
+        <item name="apptentiveToolbarTheme">@style/ThemeOverlay.AppCompat.Dark.ActionBar</item>
+        <item name="apptentiveExtendedHeaderForegroundColor">@color/apptentive_text_color_primary_dark</item>
+
+        <item name="android:colorBackground">@color/apptentive_color_background_dark</item>
+
+        <item name="apptentiveWindowBackground">@color/apptentive_activity_frame_dark</item>
+        <item name="apptentiveCardBackground">@color/apptentive_card_background_dark</item>
+        <item name="apptentiveDialogBackground">@drawable/apptentive_dialog_background_dark</item>
+        <item name="apptentiveComposingAreaBackground">@drawable/apptentive_rounded_corner_shape_composing_dark</item>
+        <item name="apptentiveComposingBarBackground">@drawable/apptentive_rounded_corner_shape_composing_bar_dark</item>
+        <item name="apptentiveAttachmentItemBackground">@drawable/apptentive_empty_image_background_dark</item>
+        <item name="apptentiveCardBorderColor">@color/apptentive_card_border_color_dark</item>
+        <item name="apptentiveAttenuateColor">@color/apptentive_attenuate_color_dark</item>
+        <item name="apptentiveButtonTintColorDisabled">#FF5A595B</item>
+
+        <item name="android:textColorPrimary">@color/apptentive_text_color_primary_dark</item>
+        <item name="android:textColorPrimaryInverse">@color/apptentive_text_color_primary_light</item>
+        <item name="android:textColorSecondary">@color/apptentive_text_color_secondary_dark</item>
+        <item name="android:textColorSecondaryInverse">@color/apptentive_text_color_secondary_light</item>
+        <item name="android:textColorHint">@color/apptentive_text_color_hint_dark</item>
+        <item name="android:textColorHintInverse">@color/apptentive_text_color_hint_inverse_dark</item>
+    </style>
+    <style name="ApptentiveDefaultTheme.Dark.LightActionBar" parent="Theme.AppCompat.NoActionBar">
+        <item name="apptentiveToolbarPopupTheme">@style/ThemeOverlay.AppCompat</item>
+        <item name="apptentiveToolbarTheme">@style/ThemeOverlay.AppCompat.Light</item>
+        <item name="apptentiveExtendedHeaderForegroundColor">@color/apptentive_text_color_primary_light</item>
+
+        <item name="android:colorBackground">@color/apptentive_color_background_dark</item>
+
+        <item name="apptentiveWindowBackground">@color/apptentive_activity_frame_dark</item>
+        <item name="apptentiveCardBackground">@color/apptentive_card_background_dark</item>
+        <item name="apptentiveDialogBackground">@drawable/apptentive_dialog_background_dark</item>
+        <item name="apptentiveComposingAreaBackground">@drawable/apptentive_rounded_corner_shape_composing_dark</item>
+        <item name="apptentiveComposingBarBackground">@drawable/apptentive_rounded_corner_shape_composing_bar_dark</item>
+        <item name="apptentiveAttachmentItemBackground">@drawable/apptentive_empty_image_background_dark</item>
+        <item name="apptentiveCardBorderColor">@color/apptentive_card_border_color_dark</item>
+        <item name="apptentiveAttenuateColor">@color/apptentive_attenuate_color_dark</item>
+        <item name="apptentiveButtonTintColorDisabled">#FF5A595B</item>
+
+        <item name="android:textColorPrimary">@color/apptentive_text_color_primary_dark</item>
+        <item name="android:textColorPrimaryInverse">@color/apptentive_text_color_primary_light</item>
+        <item name="android:textColorSecondary">@color/apptentive_text_color_secondary_dark</item>
+        <item name="android:textColorSecondaryInverse">@color/apptentive_text_color_secondary_light</item>
+        <item name="android:textColorHint">@color/apptentive_text_color_hint_dark</item>
+        <item name="android:textColorHintInverse">@color/apptentive_text_color_hint_inverse_dark</item>
+    </style>
+    <style name="ApptentiveDefaultTheme.Light" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="apptentiveToolbarPopupTheme">@style/ThemeOverlay.AppCompat</item>
+        <item name="apptentiveToolbarTheme">@style/ThemeOverlay.AppCompat.ActionBar</item>
+        <item name="apptentiveExtendedHeaderForegroundColor">@color/apptentive_text_color_primary_light</item>
+
+        <item name="android:colorBackground">@color/apptentive_color_background_light</item>
+
+        <item name="apptentiveWindowBackground">@color/apptentive_activity_frame_light</item>
+        <item name="apptentiveCardBackground">@color/apptentive_card_background_light</item>
+        <item name="apptentiveDialogBackground">@drawable/apptentive_dialog_background_light</item>
+        <item name="apptentiveComposingAreaBackground">@drawable/apptentive_rounded_corner_shape_composing_light</item>
+        <item name="apptentiveComposingBarBackground">@drawable/apptentive_rounded_corner_shape_composing_bar_light</item>
+        <item name="apptentiveAttachmentItemBackground">@drawable/apptentive_empty_image_background_light</item>
+        <item name="apptentiveCardBorderColor">@color/apptentive_card_border_color_light</item>
+        <item name="apptentiveAttenuateColor">@color/apptentive_attenuate_color_light</item>
+        <item name="apptentiveButtonTintColorDisabled">#FFD6D7D7</item>
+
+        <item name="android:textColorPrimary">@color/apptentive_text_color_primary_light</item>
+        <item name="android:textColorPrimaryInverse">@color/apptentive_text_color_primary_dark</item>
+        <item name="android:textColorSecondary">@color/apptentive_text_color_secondary_light</item>
+        <item name="android:textColorSecondaryInverse">@color/apptentive_text_color_secondary_dark</item>
+        <item name="android:textColorHint">@color/apptentive_text_color_hint_light</item>
+        <item name="android:textColorHintInverse">@color/apptentive_text_color_hint_inverse_light</item>
+    </style>
+    <style name="ApptentiveDefaultTheme.Light.DarkActionBar" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="apptentiveToolbarPopupTheme">@style/ThemeOverlay.AppCompat.Dark</item>
+        <item name="apptentiveToolbarTheme">@style/ThemeOverlay.AppCompat.Dark.ActionBar</item>
+        <item name="apptentiveExtendedHeaderForegroundColor">@color/apptentive_text_color_primary_dark</item>
+
+        <item name="android:colorBackground">@color/apptentive_color_background_light</item>
+
+        <item name="apptentiveWindowBackground">@color/apptentive_activity_frame_light</item>
+        <item name="apptentiveCardBackground">@color/apptentive_card_background_light</item>
+        <item name="apptentiveDialogBackground">@drawable/apptentive_dialog_background_light</item>
+        <item name="apptentiveComposingAreaBackground">@drawable/apptentive_rounded_corner_shape_composing_light</item>
+        <item name="apptentiveComposingBarBackground">@drawable/apptentive_rounded_corner_shape_composing_bar_light</item>
+        <item name="apptentiveAttachmentItemBackground">@drawable/apptentive_empty_image_background_light</item>
+        <item name="apptentiveCardBorderColor">@color/apptentive_card_border_color_light</item>
+        <item name="apptentiveAttenuateColor">@color/apptentive_attenuate_color_light</item>
+        <item name="apptentiveButtonTintColorDisabled">#FFD6D7D7</item>
+
+        <item name="android:textColorPrimary">@color/apptentive_text_color_primary_light</item>
+        <item name="android:textColorPrimaryInverse">@color/apptentive_text_color_primary_dark</item>
+        <item name="android:textColorSecondary">@color/apptentive_text_color_secondary_light</item>
+        <item name="android:textColorSecondaryInverse">@color/apptentive_text_color_secondary_dark</item>
+        <item name="android:textColorHint">@color/apptentive_text_color_hint_light</item>
+        <item name="android:textColorHintInverse">@color/apptentive_text_color_hint_inverse_light</item>
+    </style>
+    <style name="ApptentiveDialogAnimation">
+        <item name="android:windowEnterAnimation">@anim/apptentive_slide_up_in</item>
+        <item name="android:windowExitAnimation">@anim/apptentive_slide_down_out</item>
+    </style>
+    <style name="ApptentiveMessageCenterAttachmentDownloadProgressBar">
+        <item name="android:layout_marginBottom">5dp</item>
+        <item name="android:layout_marginLeft">5dp</item>
+        <item name="android:layout_marginRight">5dp</item>
+        <item name="apptentive_progressBarColor">?attr/colorAccent</item>
+    </style>
+    <style name="ApptentiveTheme" parent="ApptentiveDefaultTheme.Light.DarkActionBar"/>
+    <style name="ApptentiveTheme.Base">
+        <!-- Setting appcompat’s color theming attrs -->
+        <item name="colorPrimary">@color/apptentive_color_primary</item>
+        <!-- colorPrimaryDark is used for the status bar (with the battery, clock, etc). -->
+        <item name="colorPrimaryDark">@color/apptentive_color_primary_dark</item>
+        <!-- colorAccent is used as the default value for colorControlActivated used to tint widgets. -->
+        <item name="colorAccent">@color/apptentive_color_accent</item>
+
+        <!-- Needed since design support library 23.2.0 -->
+        <item name="textColorError">@color/apptentive_validation_failed_color</item>
+
+        <item name="apptentiveToolbarBackground">?attr/colorPrimary</item>
+        <item name="apptentiveToolbarTitleTextAppearance">@style/Apptentive.TextAppearance.Toolbar</item>
+        <item name="apptentiveToolbarIconClose">@drawable/apptentive_ic_toolbar_close</item>
+        <item name="apptentiveToolbarIconProfile">@drawable/apptentive_ic_profile_edit</item>
+
+        <item name="apptentiveViewBackground">?android:attr/colorBackground</item>
+
+        <item name="apptentiveValidationFailedColor">@color/apptentive_validation_failed_color</item>
+        <item name="apptentiveButtonTintColor">?attr/colorAccent</item>
+        <item name="apptentiveButtonTintColorStateList">@color/apptentive_tinted_button</item>
+
+        <item name="apptentiveTextSizeHeadline">@dimen/apptentive_text_size_headline</item>
+        <item name="apptentiveTextSizeTitle">@dimen/apptentive_text_size_title</item>
+        <item name="apptentiveTextSizeSubhead">@dimen/apptentive_text_size_subhead</item>
+        <item name="apptentiveTextSizeBody2">@dimen/apptentive_text_size_body_2</item>
+        <item name="apptentiveTextSizeBody1">@dimen/apptentive_text_size_body_1</item>
+        <item name="apptentiveTextSizeCaption">@dimen/apptentive_text_size_caption</item>
+        <item name="apptentiveTextSizeButtonBorderless">@dimen/apptentive_text_size_button</item>
+        <item name="apptentiveTextSizeButtonColored">@dimen/apptentive_text_size_button</item>
+
+        <item name="apptentiveTypefaceDefault">@integer/apptentive_typeface_normal</item>
+        <item name="apptentiveTypefaceToolbar">?apptentiveTypefaceDefault</item>
+        <item name="apptentiveTypefaceHeadline">?apptentiveTypefaceDefault</item>
+        <item name="apptentiveTypefaceTitle">?apptentiveTypefaceDefault</item>
+        <item name="apptentiveTypefaceSubhead">?apptentiveTypefaceDefault</item>
+        <item name="apptentiveTypefaceBody2">?apptentiveTypefaceDefault</item>
+        <item name="apptentiveTypefaceBody1">?apptentiveTypefaceDefault</item>
+        <item name="apptentiveTypefaceCaption">?apptentiveTypefaceDefault</item>
+        <item name="apptentiveTypefaceButtonBorderless">?apptentiveTypefaceDefault</item>
+        <item name="apptentiveTypefaceButtonColored">?apptentiveTypefaceDefault</item>
+
+        <item name="apptentiveFontFamilyDefault">@string/apptentive_font_family_default_material</item>
+        <item name="apptentiveFontFamilyMediumDefault">@string/apptentive_font_family_default_medium_material</item>
+        <item name="apptentiveFontFamilyToolbar">?apptentiveFontFamilyDefault</item>
+        <item name="apptentiveFontFamilyHeadline">?apptentiveFontFamilyDefault</item>
+        <item name="apptentiveFontFamilyTitle">?apptentiveFontFamilyMediumDefault</item>
+        <item name="apptentiveFontFamilySubhead">?apptentiveFontFamilyDefault</item>
+        <item name="apptentiveFontFamilyBody2">?apptentiveFontFamilyMediumDefault</item>
+        <item name="apptentiveFontFamilyBody1">?apptentiveFontFamilyDefault</item>
+        <item name="apptentiveFontFamilyCaption">?apptentiveFontFamilyDefault</item>
+        <item name="apptentiveFontFamilyButtonBorderless">?apptentiveFontFamilyMediumDefault</item>
+        <item name="apptentiveFontFamilyButtonColored">?apptentiveFontFamilyMediumDefault</item>
+
+        <!-- Here we set Android widget styles -->
+        <item name="apptentiveCheckBoxStyle">@style/Apptentive.Widget.CheckBox</item>
+        <item name="apptentiveRadioButtonStyle">@style/Apptentive.Widget.RadioButton</item>
+        <item name="apptentiveInteractionButtonStyle">@style/Apptentive.Widget.Button.Borderless</item>
+        <item name="apptentiveInteractionButtonColorStateList">@color/apptentive_interaction_button_color_state_list</item>
+        <item name="apptentiveInteractionButtonColorDefault">?attr/colorAccent</item>
+        <item name="apptentiveInteractionButtonColorHighlighted">?attr/colorAccent</item>
+        <item name="apptentiveInteractionButtonColorDisabled">#FFD6D7D7</item>
+
+        <!-- Here we set Apptentive widget styles -->
+        <item name="apptentiveAvatarViewGreetingStyle">@style/Apptentive.Style.Widget.AvatarView.Greeting</item>
+        <item name="apptentiveAvatarViewMessageStyle">@style/Apptentive.Style.Widget.AvatarView.Message</item>
+        <item name="apptentiveMessageCenterBadgeStyle">@style/Apptentive.Style.Widget.Badge</item>
+        <item name="apptentiveFabStyle">@style/Apptentive.Style.Widget.FloatingActionButton</item>
+        <item name="apptentiveSurveySentToastStyle">@style/Apptentive.Style.Widget.SurveySentToast</item>
+
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:windowAnimationStyle">@android:style/Animation.Dialog</item>
+        <!-- Make contextual ActionBar (such as highlighting text for copy/paste) shown over the toolbar bar instead of pushing it down -->
+        <item name="windowActionModeOverlay">true</item>
+
+        <item name="apptentiveCardElevation">2dp</item>
+    </style>
+    <style name="ApptentiveTheme.Base.Versioned">
+    </style>
+    <style name="ApptentiveTheme.Base.Versioned.TranslucentStatus"/>
+    <style name="ApptentiveTheme.Base.Versioned.TranslucentStatus.FullScreen">
+        <item name="android:windowFullscreen">true</item>
+    </style>
+    <style name="ApptentiveThemeAbout" parent="ApptentiveDefaultTheme.Light.DarkActionBar">
+        <item name="colorPrimary">@color/apptentive_brand_red</item>
+    </style>
+</resources>

@@ -610,7 +610,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 334177419}
-        m_MethodName: OnEngageButton
+        m_MethodName: OnMessageCenterButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -722,7 +722,9 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Button
+  m_Text: 'Engage
+
+'
 --- !u!222 &1890455542
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -937,7 +939,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Button
+  m_Text: Message Center
 --- !u!222 &2046058712
 CanvasRenderer:
   m_ObjectHideFlags: 0

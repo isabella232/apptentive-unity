@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+  ~ Copyright (c) 2016, Apptentive, Inc. All Rights Reserved.
+  ~ Please refer to the LICENSE file for the terms and conditions
+  ~ under which redistribution and use of this file is permitted.
+  -->
+
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             xmlns:tools="http://schemas.android.com/tools"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             android:background="?apptentiveAttachmentItemBackground">
+    <ImageView android:id="@+id/image"
+               android:layout_width="match_parent"
+               android:layout_height="match_parent"
+               android:scaleType="fitCenter"
+               android:src="@null"
+               android:contentDescription="@string/apptentive_message_center_content_description_attachment"/>
+    <TextView android:id="@+id/image_file_extension"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:layout_gravity="center|center_horizontal"
+              android:layout_marginTop="@dimen/apptentive_image_file_extension_layout_top"
+              android:gravity="center_horizontal"
+              android:textSize="@dimen/apptentive_image_file_extension_default_text_size"
+              android:ellipsize="end"
+              android:textColor="#617D8A"
+              tools:text="File"/>
+    <View android:id="@+id/mask"
+          android:layout_width="match_parent"
+          android:layout_height="match_parent"
+          android:visibility="gone"
+          android:background="#88000000"/>
+    <ImageView android:id="@+id/indicator"
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:layout_gravity="top|end"
+               android:layout_marginTop="-2dp"
+               android:layout_marginLeft="0dp"
+               android:layout_marginStart="0dp"
+               android:layout_marginRight="-2dp"
+               android:layout_marginEnd="-2dp"
+               android:paddingBottom="8dp"
+               android:paddingLeft="8dp"
+               android:paddingStart="8dp"
+               android:paddingRight="0dp"
+               android:paddingEnd="0dp"
+               android:src="@drawable/apptentive_ic_image_picker_unselected"
+               android:contentDescription="@string/apptentive_message_center_content_description_attachment_delete"/>
+    <ProgressBar android:id="@+id/thumbnail_progress"
+                 android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
+                 android:layout_gravity="center"
+                 style="@android:style/Widget.ProgressBar.Small"
+                 android:visibility="gone"/>
+    <com.apptentive.android.sdk.view.ApptentiveMaterialDeterminateProgressBar android:id="@+id/thumbnail_progress_determinate"
+                                                                              android:layout_width="match_parent"
+                                                                              android:layout_height="3dp"
+                                                                              android:layout_gravity="bottom"
+                                                                              style="@style/ApptentiveMessageCenterAttachmentDownloadProgressBar"
+                                                                              android:visibility="gone"/>
+</FrameLayout>
