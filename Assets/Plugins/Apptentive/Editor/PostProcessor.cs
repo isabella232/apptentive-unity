@@ -11,7 +11,7 @@ using UnityEditor.iOS.Xcode;
 
 using System.IO;
 
-namespace ApptentiveConnectInternal
+namespace ApptentiveSDKInternal
 {
     static class BuildPostProcessBuild
     {

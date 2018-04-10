@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace ApptentiveConnectInternal
+namespace ApptentiveSDKInternal
 {
     static class Constants
     {
-        public static string PluginName = "ApptentiveConnect";
-        public static string Version = "0.0.1";
+        public static string PluginName = "Apptentive";
+        public static string Version = "5.0.0";
     }
 }

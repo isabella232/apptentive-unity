@@ -6,24 +6,30 @@ using System.Runtime.InteropServices;
 
 using UnityEngine;
 
-using ApptentiveConnectInternal;
+using ApptentiveSDKInternal;
 
-namespace ApptentiveConnect
+namespace ApptentiveSDK
 {
-    delegate void ApptentiveNativeMessageCallback(string message);
-    delegate void ApptentiveNativeMessageHandler(IDictionary<string, string> data);
+    delegate void ApptentiveNativeCallback(string name, string payload);
+    delegate void ApptentiveNativeCallbackHandler(IDictionary<string, string> data);
+
+    [Serializable]
+    public class ApptentiveConfiguration
+    {
+        public string appKey;
+        public string appSignature;
+    }
 
     public sealed class Apptentive : MonoBehaviour
     {
         static Apptentive s_instance;
 
-        [Tooltip("The API key for Apptentive.\n\n This key is found on the Apptentive website under Settings, API & Development.")]
         [SerializeField]
-        string m_APIKey;
+        ApptentiveConfiguration m_configuration;
 
         IPlatform m_platform;
 
-        IDictionary<string, ApptentiveNativeMessageHandler> m_nativeHandlerLookup;
+        IDictionary<string, ApptentiveNativeCallbackHandler> m_nativeHandlerLookup;
 
         #region Life cycle
 
@@ -41,7 +47,7 @@ namespace ApptentiveConnect
         {
             if (s_instance == null)
             {
-                if (InitPlatform(m_APIKey))
+                if (InitPlatform(m_configuration))
                 {
                     s_instance = this;
                     DontDestroyOnLoad(gameObject);
@@ -59,9 +65,13 @@ namespace ApptentiveConnect
 
         void OnValidate()
         {
-            if (string.IsNullOrEmpty(m_APIKey))
+            if (string.IsNullOrEmpty(m_configuration.appKey))
             {
-                Debug.LogWarning("Missing Apptentive API key");
+                Debug.LogWarning("Missing Apptentive App key");
+            }
+            if (string.IsNullOrEmpty(m_configuration.appSignature))
+            {
+                Debug.LogWarning("Missing Apptentive App Signature");
             }
         }
 
@@ -69,13 +79,13 @@ namespace ApptentiveConnect
 
         #region Platforms
 
-        bool InitPlatform(string APIKey)
+        bool InitPlatform(ApptentiveConfiguration configuration)
         {
             try
             {
                 if (m_platform == null)
                 {
-                    m_platform = CreatePlatform(APIKey);
+                    m_platform = CreatePlatform(configuration);
                     return m_platform != null;
                 }
             }
@@ -87,13 +97,13 @@ namespace ApptentiveConnect
             return false;
         }
 
-        IPlatform CreatePlatform(string APIKey)
+        IPlatform CreatePlatform(ApptentiveConfiguration configuration)
         {
             #if UNITY_IOS || UNITY_IPHONE
             if (Application.platform == RuntimePlatform.IPhonePlayer)
             {
-                ApptentiveNativeMessageCallback callback = NativeMessageCallback;
-                return new PlatformIOS(gameObject.name, callback.Method.Name, Constants.Version, APIKey);
+                ApptentiveNativeCallback callback = NativeMessageCallback;
+                return new PlatformIOS(gameObject.name, callback.Method.Name, Constants.Version, configuration);
             }
             #elif UNITY_ANDROID
             if (Application.platform == RuntimePlatform.Android)
@@ -108,66 +118,142 @@ namespace ApptentiveConnect
 
         interface IPlatform
         {
-            bool Engage(string evt, IDictionary<string, object> customData);
-            bool PresentMessageCenter(IDictionary<string, object> customData);
-            bool CanShowInteraction(string eventName);
-            bool CanShowMessageCenter { get; }
+            void Engage(string evt, IDictionary<string, object> customData, Action<Boolean> callback);
+            void PresentMessageCenter(IDictionary<string, object> customData, Action<Boolean> callback);
+            void CanShowInteraction(string eventName, Action<Boolean> callback);
+            void CanShowMessageCenter(Action<Boolean> callback);
+        }
+
+        abstract class Platform : IPlatform
+        {
+            public static readonly IPlatform Null = new NullPlatform();
+
+            readonly IDictionary<int, Delegate> m_callbackLookup;
+
+            public Platform()
+            {
+                m_callbackLookup = new Dictionary<int, Delegate>();
+            }
+
+            public void Engage(string evt, IDictionary<string, object> customData, Action<Boolean> callback)
+            {
+                int callbackId = Engage(evt, customData);
+                RegisterCallback(callbackId, callback);
+            }
+
+            public void PresentMessageCenter(IDictionary<string, object> customData, Action<Boolean> callback)
+            {
+                int callbackId = PresentMessageCenter(customData);
+                RegisterCallback(callbackId, callback);
+            }
+
+            public void CanShowInteraction(string eventName, Action<Boolean> callback)
+            {
+                int callbackId = CanShowInteraction(eventName);
+                RegisterCallback(callbackId, callback);
+            }
+
+            public void CanShowMessageCenter(Action<Boolean> callback)
+            {
+                int callbackId = CanShowMessageCenter();
+                RegisterCallback(callbackId, callback);
+            }
+
+            protected abstract int Engage(string evt, IDictionary<string, object> customData);
+
+            protected abstract int PresentMessageCenter(IDictionary<string, object> customData);
+
+            protected abstract int CanShowInteraction(string eventName);
+
+            protected abstract int CanShowMessageCenter();
+
+            void RegisterCallback(int callbackId, Delegate callback)
+            {
+                if (callback != null)
+                {
+                    m_callbackLookup[callbackId] = callback; // TODO: check for duplicates
+                }
+            }
+        }
+
+        class NullPlatform : IPlatform
+        {
+            public void CanShowInteraction(string eventName, Action<bool> callback)
+            {
+                if (callback != null)
+                {
+                    callback(false);
+                }
+            }
+
+            public void CanShowMessageCenter(Action<bool> callback)
+            {
+                if (callback != null)
+                {
+                    callback(false);
+                }
+            }
+
+            public void Engage(string evt, IDictionary<string, object> customData, Action<bool> callback)
+            {
+                if (callback != null)
+                {
+                    callback(false);
+                }
+            }
+
+            public void PresentMessageCenter(IDictionary<string, object> customData, Action<bool> callback)
+            {
+                if (callback != null)
+                {
+                    callback(false);
+                }
+            }
         }
 
         #if UNITY_IOS || UNITY_IPHONE
 
-        class PlatformIOS : IPlatform
+        class PlatformIOS : Platform
         {
             [DllImport("__Internal")]
-            private static extern void __apptentive_initialize(string targetName, string methodName, string version, string APIKey);
+            private static extern void __apptentive_initialize(string targetName, string methodName, string version, string configuration);
 
             [DllImport("__Internal")]
-            private static extern bool __apptentive_engage(string eventName, string customData);
+            private static extern int __apptentive_engage(string eventName, string customData);
 
             [DllImport("__Internal")]
-            private static extern bool __apptentive_present_message_center(string customData);
+            private static extern int __apptentive_present_message_center(string customData);
 
             [DllImport("__Internal")]
-            private static extern bool __apptentive_can_show_interaction(string customData);
+            private static extern int __apptentive_can_show_interaction(string customData);
 
             [DllImport("__Internal")]
-            private static extern bool __apptentive_can_show_message_center();
-            
-            /// <summary>
-            /// Initializes a new instance of the iOS platform class.
-            /// </summary>
-            /// <param name="targetName">The name of the game object which will receive native callbacks</param>
-            /// <param name="methodName">The method of the game object which will be called from the native code</param>
-            /// <param name="version">Plugin version</param>
-            /// <param name="APIKey">Apptentive API key</param>
-            public PlatformIOS(string targetName, string methodName, string version, string APIKey)
+            private static extern int __apptentive_can_show_message_center();
+
+            public PlatformIOS(string targetName, string methodName, string version, ApptentiveConfiguration configuration)
             {
-                __apptentive_initialize(targetName, methodName, version, APIKey);
+                var configurationDict = JsonUtils.ToJson(configuration);
+                __apptentive_initialize(targetName, methodName, version, configurationDict);
             }
 
-            public bool Engage(string evt, IDictionary<string, object> customData)
+            protected override int Engage(string evt, IDictionary<string, object> customData)
             {
-                return __apptentive_engage(evt, StringUtils.SerializeString(customData));
+                return __apptentive_engage(evt, JsonUtils.ToJson(customData));
             }
 
-            public bool PresentMessageCenter(IDictionary<string, object> customData)
+            protected override int PresentMessageCenter(IDictionary<string, object> customData)
             {
-                return __apptentive_present_message_center(StringUtils.SerializeString(customData));
+                return __apptentive_present_message_center(JsonUtils.ToJson(customData));
             }
 
-            public bool CanShowInteractionForEvent(string eventName)
+            protected override int CanShowInteraction(string eventName)
             {
                 return __apptentive_can_show_interaction(eventName);
             }
 
-            public bool CanShowMessageCenter
+            protected override int CanShowMessageCenter()
             {
-                get { return __apptentive_can_show_message_center(); }
-            }
-
-            public bool CanShowInteraction(string eventName)
-            {
-                return __apptentive_can_show_interaction(eventName);
+                return __apptentive_can_show_message_center();
             }
         }
 
@@ -209,21 +295,13 @@ namespace ApptentiveConnect
 
         #endif // UNITY_ANDROID
 
-        #endregion
+        #endregion // Platform
 
         #region Native callback
 
-        void NativeMessageCallback(string param)
+        void NativeMessageCallback(string name, string payload)
         {
-            IDictionary<string, string> data = StringUtils.DeserializeString(param);
-            string name = data["name"];
-            if (string.IsNullOrEmpty(name))
-            {
-                Debug.LogError("Can't handle native callback: 'name' is undefined");
-                return;
-            }
-
-            ApptentiveNativeMessageHandler handler;
+            ApptentiveNativeCallbackHandler handler;
             if (!nativeHandlerLookup.TryGetValue(name, out handler))
             {
                 Debug.LogError("Can't handle native callback: handler not found '" + name + "'");
@@ -240,13 +318,13 @@ namespace ApptentiveConnect
             }
         }
 
-        IDictionary<string, ApptentiveNativeMessageHandler> nativeHandlerLookup
+        IDictionary<string, ApptentiveNativeCallbackHandler> nativeHandlerLookup
         {
             get
             {
                 if (m_nativeHandlerLookup == null)
                 {
-                    m_nativeHandlerLookup = new Dictionary<string, ApptentiveNativeMessageHandler>();
+                    m_nativeHandlerLookup = new Dictionary<string, ApptentiveNativeCallbackHandler>();
                 }
 
                 return m_nativeHandlerLookup;
@@ -257,24 +335,27 @@ namespace ApptentiveConnect
 
         #region Public interface
 
-        public bool Engage(string evt, IDictionary<string, object> customData = null)
+        public void Engage(string evt, Action<Boolean> callback = null, IDictionary<string, object> customData = null)
         {
-            return m_platform != null && m_platform.Engage(evt, customData);
+            m_platform.Engage(evt, customData, callback);
         }
 
-        public bool PresentMessageCenter(IDictionary<string, object> customData = null)
+        public void PresentMessageCenter(Action<Boolean> callback = null, IDictionary<string, object> customData = null)
         {
-            return m_platform != null && m_platform.PresentMessageCenter(customData);
+            m_platform.PresentMessageCenter(customData, callback);
         }
 
-        public bool CanShowInteraction(string eventName)
+        public void CanShowInteraction(string eventName, Action<Boolean> callback)
         {
-            return m_platform != null && m_platform.CanShowInteraction(eventName);
+            if (m_platform != null)
+            {
+                m_platform.CanShowInteraction(eventName, callback);
+            }
         }
 
-        public bool CanShowMessageCenter
+        public void CanShowMessageCenter(Action<bool> callback)
         {
-            get { return m_platform != null && m_platform.CanShowMessageCenter; }
+            m_platform.CanShowMessageCenter(callback);
         }
 
         #endregion
@@ -289,25 +370,9 @@ namespace ApptentiveConnect
             get { return s_instance; } // FIXME: null safety
         }
 
-        /// <summary>
-        /// The API key for Apptentive.
-        /// This key is found on the Apptentive website under Settings, API & Development.
-        /// </summary>
-        public String APIKey
+        IPlatform platform
         {
-            get { return m_APIKey; }
-        }
-
-        /// <summary>
-        /// Determines if Message Center will be displayed when `presentMessageCenterFromViewController:` is called.
-        ///
-        /// If app has not yet synced with Apptentive, you will be unable to display Message Center. Use `canShowMessageCenter`
-        /// to determine if Message Center is ready to be displayed. If Message Center is not ready you could, for example,
-        /// hide the "Message Center" button in your interface.
-        /// </summary>
-        public bool canShowMessageCenter
-        {
-            get { return m_platform != null && m_platform.CanShowMessageCenter; }
+            get { return m_platform != null ? m_platform : Platform.Null; }
         }
 
         #endregion

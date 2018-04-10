@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
 
-namespace ApptentiveConnectInternal
+namespace ApptentiveSDKInternal
 {
     static class StringUtils
     {
