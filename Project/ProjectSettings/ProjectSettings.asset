@@ -603,7 +603,9 @@ PlayerSettings:
   webGLUseEmbeddedResources: 0
   webGLCompressionFormat: 1
   webGLLinkerTarget: 0
-  scriptingDefineSymbols: {}
+  scriptingDefineSymbols:
+    1: APPTENTIVE_DEBUG
+    7: APPTENTIVE_DEBUG
   platformArchitecture: {}
   scriptingBackend: {}
   il2cppCompilerConfiguration: {}
