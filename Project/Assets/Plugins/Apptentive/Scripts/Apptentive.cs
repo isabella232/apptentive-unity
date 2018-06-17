@@ -284,12 +284,25 @@ namespace ApptentiveSDK
             {
                 throw new NotImplementedException();
             }
-            public bool CanShowMessageCenter
+
+            public void Engage(string evt, IDictionary<string, object> customData, Action<bool> callback)
             {
-                get
-                {
-                    throw new NotImplementedException();
-                }
+                throw new NotImplementedException();
+            }
+
+            public void PresentMessageCenter(IDictionary<string, object> customData, Action<bool> callback)
+            {
+                throw new NotImplementedException();
+            }
+
+            public void CanShowInteraction(string eventName, Action<bool> callback)
+            {
+                throw new NotImplementedException();
+            }
+
+            void IPlatform.CanShowMessageCenter(Action<bool> callback)
+            {
+                throw new NotImplementedException();
             }
         }
 
