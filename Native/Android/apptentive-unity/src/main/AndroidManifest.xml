@@ -1,2 +1,2 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="unity.sdk.android.apptentive.com.apptentive_unity" />
+    package="com.apptentive.android.sdk.unity" />

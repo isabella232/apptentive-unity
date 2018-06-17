@@ -7,11 +7,11 @@ public class UIHandler : MonoBehaviour
 {
     public void OnEngageButton()
     {
-        Apptentive.sharedConnection.Engage("test_event");
+        Apptentive.Engage("test_event");
     }
 
     public void OnMessageCenterButton()
     {
-        Apptentive.sharedConnection.PresentMessageCenter();
+        Apptentive.PresentMessageCenter();
     }
 }

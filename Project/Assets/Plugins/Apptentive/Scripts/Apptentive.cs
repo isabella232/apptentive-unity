@@ -14,14 +14,86 @@ namespace ApptentiveSDK
     delegate void ApptentiveNativeCallbackHandler(IDictionary<string, string> data);
 
     [Serializable]
+    public class ApptentivePlatformConfiguration
+    {
+        [SerializeField]
+        string m_appKey;
+
+        [SerializeField]
+        string m_appSignature;
+
+        public string appKey
+        {
+            get { return m_appKey; }
+        }
+
+        public string appSignature
+        {
+            get { return m_appSignature; }
+        }
+    }
+
+    [Serializable]
+    public enum ApptentiveLogLevel
+    {
+        Verbose,
+        Debug,
+        Info,
+        Warn,
+        Error
+    }
+
+    [Serializable]
     public class ApptentiveConfiguration
     {
-        public string appKey;
-        public string appSignature;
+        [SerializeField]
+        ApptentivePlatformConfiguration m_ios;
+
+        [SerializeField]
+        ApptentivePlatformConfiguration m_android;
+
+        [SerializeField]
+        ApptentiveLogLevel m_logLevel = ApptentiveLogLevel.Info;
+
+        [SerializeField]
+        bool m_sanitizeLogMessages = true;
+
+        public string appKey
+        {
+            get { return currentPlatformConfiguration != null ? currentPlatformConfiguration.appKey : "undefined"; }
+        }
+
+        public string appSignature
+        {
+            get { return currentPlatformConfiguration != null ? currentPlatformConfiguration.appSignature : "undefined"; }
+        }
+
+        public ApptentiveLogLevel logLevel
+        {
+            get { return m_logLevel; }
+        }
+
+        public bool sanitizeLogMessages
+        {
+            get { return m_sanitizeLogMessages; }
+        }
+
+        ApptentivePlatformConfiguration currentPlatformConfiguration
+        {
+            #if UNITY_IOS || UNITY_IPHONE
+            get { return m_ios; }
+            #elif UNITY_ANDROID
+            get { return m_android; }
+            #else
+            get { return null; }
+            #endif
+        }
     }
 
     public sealed class Apptentive : MonoBehaviour
     {
+        public static readonly string kVersion = "5.0.0";
+
         static Apptentive s_instance;
 
         [SerializeField]
@@ -31,7 +103,7 @@ namespace ApptentiveSDK
 
         IDictionary<string, ApptentiveNativeCallbackHandler> m_nativeHandlerLookup;
 
-        #region Life cycle
+#region Life cycle
 
         void Awake()
         {
@@ -75,9 +147,9 @@ namespace ApptentiveSDK
             }
         }
 
-        #endregion
+#endregion
 
-        #region Platforms
+#region Platforms
 
         bool InitPlatform(ApptentiveConfiguration configuration)
         {
@@ -99,19 +171,19 @@ namespace ApptentiveSDK
 
         IPlatform CreatePlatform(ApptentiveConfiguration configuration)
         {
-            #if UNITY_IOS || UNITY_IPHONE
+#if UNITY_IOS || UNITY_IPHONE
             if (Application.platform == RuntimePlatform.IPhonePlayer)
             {
                 ApptentiveNativeCallback callback = NativeMessageCallback;
                 return new PlatformIOS(gameObject.name, callback.Method.Name, Constants.Version, configuration);
             }
-            #elif UNITY_ANDROID
+#elif UNITY_ANDROID
             if (Application.platform == RuntimePlatform.Android)
             {
-                ApptentiveNativeMessageCallback callback = NativeMessageCallback;
-                return new PlatformAndroid(gameObject.name, callback.Method.Name, Constants.Version, APIKey);
+                ApptentiveNativeCallback callback = NativeMessageCallback;
+                return new PlatformAndroid(gameObject.name, callback.Method.Name, kVersion, configuration);
             }
-            #endif
+#endif
 
             return null;
         }
@@ -211,7 +283,7 @@ namespace ApptentiveSDK
             }
         }
 
-        #if UNITY_IOS || UNITY_IPHONE
+#if UNITY_IOS || UNITY_IPHONE
 
         class PlatformIOS : Platform
         {
@@ -257,37 +329,98 @@ namespace ApptentiveSDK
             }
         }
 
-        #elif UNITY_ANDROID
+#elif UNITY_ANDROID
 
         class PlatformAndroid : IPlatform
         {
+            private static readonly string kPluginClassName = "com.apptentive.android.sdk.unity.ApptentiveUnity";
+            private readonly object mutex = new object();
+
+            private readonly jvalue[] m_args0 = new jvalue[0];
+            private readonly jvalue[] m_args1 = new jvalue[1];
+            private readonly jvalue[] m_args2 = new jvalue[2];
+            private readonly jvalue[] m_args3 = new jvalue[3];
+            private readonly jvalue[] m_args9 = new jvalue[9];
+
+            private readonly AndroidJavaClass m_pluginClass;
+
+            private readonly IntPtr m_pluginClassRaw;
+            private readonly IntPtr m_methodShowMessageCenter;
+            private readonly IntPtr m_methodCanShowMessageCenter;
+            private readonly IntPtr m_methodGetUnreadMessageCount;
+            private readonly IntPtr m_methodEngage;
+            private readonly IntPtr m_methodQueryCanShowInteraction;
+            private readonly IntPtr m_methodSetPersonName;
+            private readonly IntPtr m_methodSetPersonEmail;
+
             /// <summary>
             /// Initializes a new instance of the Android platform class.
             /// </summary>
             /// <param name="targetName">The name of the game object which will receive native callbacks</param>
             /// <param name="methodName">The method of the game object which will be called from the native code</param>
-            /// <param name="version">Plugin version</param>
-            /// <param name="APIKey">Apptentive API key</param>
-            public PlatformAndroid(string targetName, string methodName, string version, string APIKey)
+            public PlatformAndroid(string targetName, string methodName, String version, ApptentiveConfiguration configuration)
             {
+                m_pluginClass = new AndroidJavaClass(kPluginClassName);
+                m_pluginClassRaw = m_pluginClass.GetRawClass();
+
+                // register the plugin
+                IntPtr methodRegister = GetStaticMethod(m_pluginClassRaw, "register", "(Ljava.lang.String;Ljava.lang.String;Ljava.lang.String;Ljava.lang.String;)Z");
+                var methodRegisterParams = new jvalue[] {
+                    jval(targetName),
+                    jval(methodName),
+                    jval(version),
+                    jval(ToJson(configuration))
+                };
+
+                var registered = CallStaticBoolMethod(methodRegister, methodRegisterParams);
+                if (!registered)
+                {
+                    throw new Exception("Platform not registered");
+                }
+
+                foreach (var param in methodRegisterParams)
+                {
+                    AndroidJNI.DeleteLocalRef(param.l);
+                }
+
+                // register methods
+                m_methodShowMessageCenter = GetStaticMethod(m_pluginClassRaw, "showMessageCenter", "(Ljava.lang.String;)I");;
+                m_methodCanShowMessageCenter = GetStaticMethod(m_pluginClassRaw, "canShowMessageCenter", "()I"); ;
+                m_methodGetUnreadMessageCount = GetStaticMethod(m_pluginClassRaw, "getUnreadMessageCount", "()I"); ;
+                m_methodEngage = GetStaticMethod(m_pluginClassRaw, "engage", "(Ljava.lang.String;Ljava.lang.String;)I"); ;
+                m_methodQueryCanShowInteraction = GetStaticMethod(m_pluginClassRaw, "queryCanShowInteraction", "(Ljava.lang.String;)I"); ;
+                m_methodSetPersonName = GetStaticMethod(m_pluginClassRaw, "setPersonName", "(Ljava.lang.String;)V"); ;
+                m_methodSetPersonEmail = GetStaticMethod(m_pluginClassRaw, "setPersonEmail", "(Ljava.lang.String;)V"); ;
             }
 
-            public bool Engage(string evt, IDictionary<string, object> customData)
+            ~PlatformAndroid()
             {
-                throw new NotImplementedException();
-            }
-            public bool PresentMessageCenter(IDictionary<string, object> customData)
-            {
-                throw new NotImplementedException();
-            }
-            public bool CanShowInteraction(string eventName)
-            {
-                throw new NotImplementedException();
+                m_pluginClass.Dispose();
             }
 
             public void Engage(string evt, IDictionary<string, object> customData, Action<bool> callback)
             {
-                throw new NotImplementedException();
+                lock (mutex)
+                {
+                    try
+                    {
+                        m_args2[0] = jval(evt);
+                        m_args2[1] = jval(customData != null && customData.Count > 0 ? JsonUtils.ToJson(customData) : "{}");
+
+                        int callbackId = CallStaticIntMethod(m_methodEngage, m_args2);
+
+                        AndroidJNI.DeleteLocalRef(m_args2[0].l);
+                        AndroidJNI.DeleteLocalRef(m_args2[1].l);
+                    }
+                    catch (Exception e)
+                    {
+                        Debug.LogError("Exception while calling 'Apptentive.Engage': " + e.Message);
+                        if (callback != null)
+                        {
+                            callback(false);
+                        }
+                    }
+                }
             }
 
             public void PresentMessageCenter(IDictionary<string, object> customData, Action<bool> callback)
@@ -304,13 +437,65 @@ namespace ApptentiveSDK
             {
                 throw new NotImplementedException();
             }
+
+            #region Helpers
+
+            private static IntPtr GetStaticMethod(IntPtr classRaw, string name, string signature)
+            {
+                return AndroidJNIHelper.GetMethodID(classRaw, name, signature, true);
+            }
+
+            private void CallStaticVoidMethod(IntPtr method, jvalue[] args)
+            {
+                AndroidJNI.CallStaticVoidMethod(m_pluginClassRaw, method, args);
+            }
+
+            private bool CallStaticBoolMethod(IntPtr method, jvalue[] args)
+            {
+                return AndroidJNI.CallStaticBooleanMethod(m_pluginClassRaw, method, args);
+            }
+
+            private int CallStaticIntMethod(IntPtr method, jvalue[] args)
+            {
+                return AndroidJNI.CallStaticIntMethod(m_pluginClassRaw, method, args);
+            }
+
+            private jvalue jval(string value)
+            {
+                jvalue val = new jvalue();
+                val.l = AndroidJNI.NewStringUTF(value);
+                return val;
+            }
+
+            private jvalue jval(bool value)
+            {
+                jvalue val = new jvalue();
+                val.z = value;
+                return val;
+            }
+
+            private jvalue jval(int value)
+            {
+                jvalue val = new jvalue();
+                val.i = value;
+                return val;
+            }
+
+            private jvalue jval(float value)
+            {
+                jvalue val = new jvalue();
+                val.f = value;
+                return val;
+            }
+
+            #endregion
         }
 
-        #endif // UNITY_ANDROID
+#endif // UNITY_ANDROID
 
-        #endregion // Platform
+#endregion // Platform
 
-        #region Native callback
+#region Native callback
 
         void NativeMessageCallback(string name, string payload)
         {
@@ -323,7 +508,7 @@ namespace ApptentiveSDK
 
             try
             {
-                handler(data);
+                throw new NotImplementedException();
             }
             catch (Exception e)
             {
@@ -344,44 +529,115 @@ namespace ApptentiveSDK
             }
         }
 
-        #endregion
+#endregion
 
-        #region Public interface
+#region Public interface
 
-        public void Engage(string evt, Action<Boolean> callback = null, IDictionary<string, object> customData = null)
+        public static void Engage(string evt, Action<Boolean> callback = null, IDictionary<string, object> customData = null)
         {
-            m_platform.Engage(evt, customData, callback);
+            try
+            {
+                if (s_instance == null)
+                {
+                    Debug.LogWarningFormat("[Apptentive] Unable to engage '{0}' event: SDK not properly initialized.", evt);
+                    if (callback != null)
+                    {
+                        callback(false);
+                    }
+                    return;
+                }
+
+                s_instance.platform.Engage(evt, customData, callback);
+            }
+            catch (Exception e)
+            {
+                Debug.LogErrorFormat("[Apptentive] Unable to engage '{0}' event: exception is thrown: {1}", evt, e.Message);
+            }
         }
 
-        public void PresentMessageCenter(Action<Boolean> callback = null, IDictionary<string, object> customData = null)
+        public static void PresentMessageCenter(Action<Boolean> callback = null, IDictionary<string, object> customData = null)
         {
-            m_platform.PresentMessageCenter(customData, callback);
+            try
+            {
+                if (s_instance == null)
+                {
+                    Debug.LogWarningFormat("[Apptentive] Unable to present message center: SDK not properly initialized.");
+                    if (callback != null)
+                    {
+                        callback(false);
+                    }
+                    return;
+                }
+
+                s_instance.platform.PresentMessageCenter(customData, callback);
+            }
+            catch (Exception e)
+            {
+                Debug.LogErrorFormat("[Apptentive] Unable to present message center: exception is thrown: {1}", e.Message);
+            }
         }
 
         public void CanShowInteraction(string eventName, Action<Boolean> callback)
         {
-            if (m_platform != null)
+            try
             {
-                m_platform.CanShowInteraction(eventName, callback);
+                if (s_instance == null)
+                {
+                    Debug.LogWarningFormat("[Apptentive] Unable to check if interaction can be shown: SDK not properly initialized.");
+                    if (callback != null)
+                    {
+                        callback(false);
+                    }
+                    return;
+                }
+
+                s_instance.platform.CanShowInteraction(eventName, callback);
+            }
+            catch (Exception e)
+            {
+                Debug.LogErrorFormat("[Apptentive] Unable to check if interaction can be shown: exception is thrown: {1}", e.Message);
             }
         }
 
         public void CanShowMessageCenter(Action<bool> callback)
         {
-            m_platform.CanShowMessageCenter(callback);
+            try
+            {
+                if (s_instance == null)
+                {
+                    Debug.LogWarningFormat("[Apptentive] Unable to check if message center can be shown: SDK not properly initialized.");
+                    if (callback != null)
+                    {
+                        callback(false);
+                    }
+                    return;
+                }
+
+                s_instance.platform.CanShowMessageCenter(callback);
+            }
+            catch (Exception e)
+            {
+                Debug.LogErrorFormat("[Apptentive] Unable to check if message center can be shown: exception is thrown: {1}", e.Message);
+            }
+        }
+
+        #endregion
+
+        #region Helpers
+
+        private static string ToJson(ApptentiveConfiguration configuration)
+        {
+            var payload = new Dictionary<string, object>();
+            payload["apptentiveKey"] = configuration.appKey;
+            payload["apptentiveSignature"] = configuration.appSignature;
+            payload["apptlogLevelentiveKey"] = configuration.logLevel;
+            payload["shouldSanitizeLogMessages"] = configuration.sanitizeLogMessages;
+            return JsonUtils.ToJson(payload);
         }
 
         #endregion
 
         #region Properties
-
-        /// <summary>
-        /// The shared singleton of `Apptentive`
-        /// </summary>
-        public static Apptentive sharedConnection
-        {
-            get { return s_instance; } // FIXME: null safety
-        }
 
         IPlatform platform
         {
