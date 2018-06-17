@@ -8,7 +8,6 @@ import com.apptentive.android.sdk.Apptentive;
 import com.apptentive.android.sdk.ApptentiveConfiguration;
 import com.apptentive.android.sdk.ApptentiveLog;
 import com.apptentive.android.sdk.module.messagecenter.UnreadMessagesListener;
-import com.apptentive.android.sdk.util.NotImplementedException;
 import com.apptentive.android.sdk.util.StringUtils;
 import com.unity3d.player.UnityPlayer;
 
@@ -19,8 +18,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 public final class ApptentiveUnity implements UnreadMessagesListener {
+	private static String scriptTarget;
+	private static String scriptMethod;
+
 	public static boolean register(String target, String method, String version, String configurationJson) {
 		try {
+			scriptTarget = target;
+			scriptMethod = method;
+
 			ApptentiveConfiguration configuration = parseConfiguration(configurationJson);
 			Apptentive.register(getApplication(), configuration);
 			return true;
@@ -135,7 +140,14 @@ public final class ApptentiveUnity implements UnreadMessagesListener {
 	}
 
 	private static void sendNativeCallback(String name, Map<String, Object> payload) {
-		throw new NotImplementedException();
+		String data = serialize(name, payload);
+		UnityPlayer.UnitySendMessage(scriptTarget, scriptMethod, data);
+	}
+
+	private static String serialize(String name, Map<String, Object> payload) {
+		StringBuilder result = new StringBuilder();
+
+		return result.toString();
 	}
 
 	//endregion
