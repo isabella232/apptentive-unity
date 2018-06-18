@@ -332,6 +332,10 @@ namespace ApptentiveSDKInternal
 
         #region typecasting properties
 
+        public abstract object RawValue
+        {
+            get;
+        }
 
         public virtual double AsDouble
         {
@@ -749,6 +753,18 @@ namespace ApptentiveSDKInternal
         public override JSONNodeType Tag { get { return JSONNodeType.Array; } }
         public override bool IsArray { get { return true; } }
         public override Enumerator GetEnumerator() { return new Enumerator(m_List.GetEnumerator()); }
+        public override object RawValue
+        {
+            get
+            {
+                object[] values = new object[m_List.Count];
+                for (int aIndex = 0; aIndex < m_List.Count; ++aIndex)
+                {
+                    values[aIndex] = m_List[aIndex].RawValue;
+                }
+                return values;
+            }
+        }
 
         public override JSONNode this[int aIndex]
         {
@@ -850,6 +866,19 @@ namespace ApptentiveSDKInternal
         {
             get { return inline; }
             set { inline = value; }
+        }
+
+        public override object RawValue
+        {
+            get
+            {
+                IDictionary<string, object> values = new Dictionary<string, object>();
+                foreach (var e in m_Dict)
+                {
+                    values[e.Key] = e.Value.RawValue;
+                }
+                return values;
+            }
         }
 
         public override JSONNodeType Tag { get { return JSONNodeType.Object; } }
@@ -1008,6 +1037,14 @@ namespace ApptentiveSDKInternal
             }
         }
 
+        public override object RawValue
+        {
+            get
+            {
+                return m_Data;
+            }
+        }
+
         public JSONString(string aData)
         {
             m_Data = aData;
@@ -1052,6 +1089,19 @@ namespace ApptentiveSDKInternal
                 double v;
                 if (double.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out v))
                     m_Data = v;
+            }
+        }
+
+        public override object RawValue
+        {
+            get
+            {
+                string value = Value;
+                int intValue;
+                if (int.TryParse(value, out intValue))
+                    return intValue;
+
+                return float.Parse(value, NumberStyles.Float, CultureInfo.InvariantCulture);
             }
         }
 
@@ -1127,6 +1177,15 @@ namespace ApptentiveSDKInternal
                     m_Data = v;
             }
         }
+
+        public override object RawValue
+        {
+            get
+            {
+                return bool.Parse(Value);
+            }
+        }
+
         public override bool AsBool
         {
             get { return m_Data; }
@@ -1183,7 +1242,16 @@ namespace ApptentiveSDKInternal
             get { return "null"; }
             set { }
         }
-        public override bool AsBool
+
+		public override object RawValue
+		{
+			get
+			{
+                return null;
+			}
+		}
+
+		public override bool AsBool
         {
             get { return false; }
             set { }
@@ -1236,7 +1304,15 @@ namespace ApptentiveSDKInternal
             return aVal;
         }
 
-        public override JSONNode this[int aIndex]
+		public override object RawValue
+		{
+			get
+			{
+                return m_Node != null ? m_Node.RawValue : null;
+			}
+		}
+
+		public override JSONNode this[int aIndex]
         {
             get { return new JSONLazyCreator(this); }
             set { Set(new JSONArray()).Add(value); }

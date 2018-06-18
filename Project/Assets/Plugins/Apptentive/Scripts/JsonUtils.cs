@@ -7,81 +7,20 @@ namespace ApptentiveSDKInternal
 {
     static class JsonUtils
     {
-        public static string ToJson(object target)
+        public static object Parse(string json)
         {
-            try
-            {
-                return JsonUtility.ToJson(target);
-            }
-            catch (Exception)
-            {
-                return null;
-            }
+            return JSON.Parse(json).RawValue;
         }
 
         public static string ToJson(IDictionary<string, object> dictionary)
         {
-            var result = new StringBuilder();
-            result.Append("{");
-            int count = 0;
+            var root = new JSONObject();
             foreach (var e in dictionary)
             {
-                result.Append(Escape(e.Key));
-                result.Append(":");
-                result.Append(Escape(e.Value));
-
-                if (++count < dictionary.Count)
-                {
-                    result.Append(",");
-                }
-            }
-            result.Append("}");
-            return result.ToString();
-        }
-
-        private static string Escape(object value)
-        {
-            if (value == null)
-            {
-                return "null";
+                root.Add(e.Key, StringUtils.ToString(e.Value));
             }
 
-            if (value is bool)
-            {
-                return (bool) value ? "true" : "false";
-            }
-
-            if (value is sbyte ||
-                value is byte ||
-                value is short ||
-                value is ushort ||
-                value is int ||
-                value is uint ||
-                value is long ||
-                value is ulong ||
-                value is float ||
-                value is double ||
-                value is decimal)
-            {
-                return value.ToString();
-            }
-
-            return EscapeString(value.ToString());
-        }
-
-        private static string EscapeString(string value)
-        {
-            if (value == null) {
-                return "null";
-            }
-
-            value = value.Replace("\b", "\\b");
-            value = value.Replace("\f", "\\f");
-            value = value.Replace("\n", "\\n");
-            value = value.Replace("\r", "\\r");
-            value = value.Replace("\t", "\\t");
-
-            return '"' + value + '"';
+            return root.ToString();
         }
     }
 }

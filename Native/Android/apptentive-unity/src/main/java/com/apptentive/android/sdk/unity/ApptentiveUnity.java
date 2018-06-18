@@ -3,6 +3,7 @@ package com.apptentive.android.sdk.unity;
 import android.app.Activity;
 import android.app.Application;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.apptentive.android.sdk.Apptentive;
 import com.apptentive.android.sdk.ApptentiveConfiguration;
@@ -18,6 +19,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 public final class ApptentiveUnity implements UnreadMessagesListener {
+	private static final String TAG = ApptentiveUnity.class.getSimpleName();
+	private static final String CALLBACK_NAME_BOOLEAN = "booleanCallback";
+
 	private static String scriptTarget;
 	private static String scriptMethod;
 
@@ -126,8 +130,10 @@ public final class ApptentiveUnity implements UnreadMessagesListener {
 		@Override
 		public void onFinish(boolean result) {
 			Map<String, Object> payload = new HashMap<>();
+			payload.put("id", id);
+			payload.put("methodName", name);
 			payload.put("result", result);
-			sendNativeCallback(name, payload);
+			sendNativeCallback(CALLBACK_NAME_BOOLEAN, payload);
 		}
 
 		public int getId() {
@@ -140,14 +146,19 @@ public final class ApptentiveUnity implements UnreadMessagesListener {
 	}
 
 	private static void sendNativeCallback(String name, Map<String, Object> payload) {
-		String data = serialize(name, payload);
-		UnityPlayer.UnitySendMessage(scriptTarget, scriptMethod, data);
+		try {
+			String data = serialize(name, payload);
+			UnityPlayer.UnitySendMessage(scriptTarget, scriptMethod, data);
+		} catch (Exception e) {
+			Log.e(TAG, "Exception while sending native callback", e);
+		}
 	}
 
-	private static String serialize(String name, Map<String, Object> payload) {
-		StringBuilder result = new StringBuilder();
-
-		return result.toString();
+	private static String serialize(String name, Map<String, Object> payload) throws JSONException {
+		JSONObject json = new JSONObject();
+		json.put("name", name);
+		json.put("payload", new JSONObject(payload));
+		return json.toString();
 	}
 
 	//endregion

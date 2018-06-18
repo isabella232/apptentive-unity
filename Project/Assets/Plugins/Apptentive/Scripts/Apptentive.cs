@@ -10,8 +10,8 @@ using ApptentiveSDKInternal;
 
 namespace ApptentiveSDK
 {
-    delegate void ApptentiveNativeCallback(string name, string payload);
-    delegate void ApptentiveNativeCallbackHandler(IDictionary<string, string> data);
+    delegate void ApptentiveNativeCallback(string payload);
+    delegate void ApptentiveNativeCallbackHandler(string name, IDictionary<string, object> data);
 
     [Serializable]
     public class ApptentivePlatformConfiguration
@@ -497,22 +497,47 @@ namespace ApptentiveSDK
 
 #region Native callback
 
-        void NativeMessageCallback(string name, string payload)
+        void NativeMessageCallback(string data)
         {
-            ApptentiveNativeCallbackHandler handler;
-            if (!nativeHandlerLookup.TryGetValue(name, out handler))
-            {
-                Debug.LogError("Can't handle native callback: handler not found '" + name + "'");
-                return;
-            }
+            string callbackName = null;
+            ApptentiveLog.d("Native message: " + data);
 
             try
             {
-                throw new NotImplementedException();
+                var dataObj = JsonUtils.Parse(data) as Dictionary<string, object>;
+                if (dataObj == null)
+                {
+                    Debug.LogError("Can't handle native callback: unexpected data '" + data + "'");
+                    return;
+                }
+
+                callbackName = GetValue<string>(dataObj, "name");
+                if (callbackName == null)
+                {
+                    Debug.LogError("Can't handle native callback: unexpected 'name' value '" + callbackName + "'");
+                    return;
+                }
+
+                var payload = GetValue<Dictionary<string, object>>(dataObj, "payload");
+                if (payload == null)
+                {
+                    Debug.LogError("Can't handle native callback: unexpected 'payload' value '" + payload + "'");
+                    return;
+                }
+
+                ApptentiveNativeCallbackHandler handler;
+                if (!nativeHandlerLookup.TryGetValue(callbackName, out handler))
+                {
+                    Debug.LogError("Can't handle native callback: handler not found '" + callbackName + "'");
+                    return;
+                }
+
+
+                handler(callbackName, payload);
             }
             catch (Exception e)
             {
-                Debug.LogError("Exception while handling native callback (" + name + "): " + e.Message);
+                Debug.LogError("Exception while handling native callback (" + callbackName + "): " + e.Message);
             }
         }
 
@@ -523,6 +548,24 @@ namespace ApptentiveSDK
                 if (m_nativeHandlerLookup == null)
                 {
                     m_nativeHandlerLookup = new Dictionary<string, ApptentiveNativeCallbackHandler>();
+                    m_nativeHandlerLookup["booleanCallback"] = (name, payload) => {
+                        var id = GetValue<int>(payload, "id", -1);
+                        if (id == -1)
+                        {
+                            Debug.LogError("Missing or invalid 'id' key");
+                            return;
+                        }
+
+                        var methodName = GetValue<string>(payload, "methodName");
+                        if (methodName == null)
+                        {
+                            Debug.LogError("Missing or invalid 'methodName' key");
+                            return;
+                        }
+
+                        var result = GetValue<bool>(payload, "result");
+                        Debug.LogFormat("id={0} methodName={1} result={2}", id.ToString(), methodName, result.ToString());
+                    };
                 }
 
                 return m_nativeHandlerLookup;
@@ -531,7 +574,7 @@ namespace ApptentiveSDK
 
 #endregion
 
-#region Public interface
+        #region Public interface
 
         public static void Engage(string evt, Action<Boolean> callback = null, IDictionary<string, object> customData = null)
         {
@@ -633,6 +676,17 @@ namespace ApptentiveSDK
             payload["apptlogLevelentiveKey"] = configuration.logLevel;
             payload["shouldSanitizeLogMessages"] = configuration.sanitizeLogMessages;
             return JsonUtils.ToJson(payload);
+        }
+
+        private static T GetValue<T>(IDictionary<string, object> dict, string key, T defaultValue = default(T))
+        {
+            object value;
+            if (dict.TryGetValue(key, out value) && value is T)
+            {
+                return (T) value;
+            }
+
+            return defaultValue;
         }
 
         #endregion
