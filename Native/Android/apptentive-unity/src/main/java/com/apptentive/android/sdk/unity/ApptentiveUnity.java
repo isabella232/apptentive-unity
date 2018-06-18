@@ -87,11 +87,9 @@ public final class ApptentiveUnity implements UnreadMessagesListener {
 
 		// log level
 		String logLevelString = configurationJson.optString("logLevel");
-		if (!StringUtils.isNullOrEmpty(logLevelString)) {
-			ApptentiveLog.Level logLevel = ApptentiveLog.Level.parse(logLevelString);
-			if (logLevel != ApptentiveLog.Level.UNKNOWN) {
-				configuration.setLogLevel(logLevel);
-			}
+		ApptentiveLog.Level logLevel = parseLogLevel(logLevelString);
+		if (logLevel != ApptentiveLog.Level.UNKNOWN) {
+			configuration.setLogLevel(logLevel);
 		}
 
 		// should sanitize log level
@@ -99,6 +97,23 @@ public final class ApptentiveUnity implements UnreadMessagesListener {
 		configuration.setShouldSanitizeLogMessages(shouldSanitizeLogMessages);
 
 		return configuration;
+	}
+
+	private static ApptentiveLog.Level parseLogLevel(String value) {
+		switch (value) {
+			case "Verbose":
+				return ApptentiveLog.Level.VERBOSE;
+			case "Debug":
+				return ApptentiveLog.Level.DEBUG;
+			case "Info":
+				return ApptentiveLog.Level.INFO;
+			case "Warn":
+				return ApptentiveLog.Level.WARN;
+			case "Error":
+				return ApptentiveLog.Level.ERROR;
+		}
+
+		return ApptentiveLog.Level.UNKNOWN;
 	}
 
 	//endregion

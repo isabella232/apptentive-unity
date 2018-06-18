@@ -425,7 +425,25 @@ namespace ApptentiveSDK
 
             public void PresentMessageCenter(IDictionary<string, object> customData, Action<bool> callback)
             {
-                throw new NotImplementedException();
+                lock (mutex)
+                {
+                    try
+                    {
+                        m_args1[0] = jval(customData != null && customData.Count > 0 ? JsonUtils.ToJson(customData) : "{}");
+
+                        int callbackId = CallStaticIntMethod(m_methodShowMessageCenter, m_args1);
+
+                        AndroidJNI.DeleteLocalRef(m_args1[0].l);
+                    }
+                    catch (Exception e)
+                    {
+                        Debug.LogError("Exception while calling 'Apptentive.PresentMessageCenter': " + e.Message);
+                        if (callback != null)
+                        {
+                            callback(false);
+                        }
+                    }
+                }
             }
 
             public void CanShowInteraction(string eventName, Action<bool> callback)
@@ -616,7 +634,7 @@ namespace ApptentiveSDK
             }
             catch (Exception e)
             {
-                Debug.LogErrorFormat("[Apptentive] Unable to present message center: exception is thrown: {1}", e.Message);
+                Debug.LogErrorFormat("[Apptentive] Unable to present message center: exception is thrown: {0}", e.Message);
             }
         }
 
@@ -673,7 +691,7 @@ namespace ApptentiveSDK
             var payload = new Dictionary<string, object>();
             payload["apptentiveKey"] = configuration.appKey;
             payload["apptentiveSignature"] = configuration.appSignature;
-            payload["apptlogLevelentiveKey"] = configuration.logLevel;
+            payload["logLevel"] = configuration.logLevel;
             payload["shouldSanitizeLogMessages"] = configuration.sanitizeLogMessages;
             return JsonUtils.ToJson(payload);
         }

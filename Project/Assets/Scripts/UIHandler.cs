@@ -5,9 +5,14 @@ using ApptentiveSDK;
 
 public class UIHandler : MonoBehaviour
 {
-    public void OnEngageButton()
+    public void OnLoveDialogButton()
     {
-        Apptentive.Engage("test_event");
+        Apptentive.Engage("love_dialog");
+    }
+
+    public void OnSurveyButton()
+    {
+        Apptentive.Engage("survey");
     }
 
     public void OnMessageCenterButton()
