@@ -7,16 +7,23 @@ import android.util.Log;
 
 import com.apptentive.android.sdk.Apptentive;
 import com.apptentive.android.sdk.ApptentiveConfiguration;
+import com.apptentive.android.sdk.ApptentiveInstance;
+import com.apptentive.android.sdk.ApptentiveInternal;
 import com.apptentive.android.sdk.ApptentiveLog;
+import com.apptentive.android.sdk.lifecycle.ApptentiveActivityLifecycleCallbacks;
 import com.apptentive.android.sdk.module.messagecenter.UnreadMessagesListener;
+import com.apptentive.android.sdk.util.RuntimeUtils;
 import com.apptentive.android.sdk.util.StringUtils;
 import com.unity3d.player.UnityPlayer;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
+
+import static com.unity3d.player.UnityPlayer.currentActivity;
 
 public final class ApptentiveUnity implements UnreadMessagesListener {
 	private static final String TAG = ApptentiveUnity.class.getSimpleName();
@@ -32,6 +39,11 @@ public final class ApptentiveUnity implements UnreadMessagesListener {
 
 			ApptentiveConfiguration configuration = parseConfiguration(configurationJson);
 			Apptentive.register(getApplication(), configuration);
+
+			Application.ActivityLifecycleCallbacks callbacks = getActivityLifecycleCallbacks();
+			callbacks.onActivityCreated(getActivity(), null);
+			callbacks.onActivityStarted(getActivity());
+			callbacks.onActivityResumed(getActivity());
 			return true;
 		} catch (Exception e) {
 			ApptentiveLog.e(e, "Exception while registering Apptentive");
@@ -185,7 +197,14 @@ public final class ApptentiveUnity implements UnreadMessagesListener {
 	}
 
 	private static Activity getActivity() {
-		return UnityPlayer.currentActivity;
+		return currentActivity;
+	}
+
+	private static Application.ActivityLifecycleCallbacks getActivityLifecycleCallbacks() throws ClassNotFoundException, NoSuchFieldException, IllegalAccessException {
+		Class<?> holderClass = Class.forName("com.apptentive.android.sdk.lifecycle.ApptentiveActivityLifecycleCallbacks$Holder");
+		Field instance = holderClass.getDeclaredField("INSTANCE");
+		instance.setAccessible(true);
+		return (Application.ActivityLifecycleCallbacks) instance.get(null);
 	}
 
 	//endregion
