@@ -12,6 +12,7 @@ namespace ApptentiveSDK
 {
     delegate void ApptentiveNativeCallback(string payload);
     delegate void ApptentiveNativeCallbackHandler(string name, IDictionary<string, object> data);
+    delegate void ApptentiveUnreadMessageDelegate(int unreadMessageCount);
 
     [Serializable]
     public class ApptentivePlatformConfiguration
@@ -102,8 +103,9 @@ namespace ApptentiveSDK
         IPlatform m_platform;
 
         IDictionary<string, ApptentiveNativeCallbackHandler> m_nativeHandlerLookup;
+        IList<ApptentiveUnreadMessageDelegate> m_unreadMessageDelegates = new List<ApptentiveUnreadMessageDelegate>();
 
-#region Life cycle
+        #region Life cycle
 
         void Awake()
         {
@@ -147,9 +149,9 @@ namespace ApptentiveSDK
             }
         }
 
-#endregion
+        #endregion
 
-#region Platforms
+        #region Platforms
 
         bool InitPlatform(ApptentiveConfiguration configuration)
         {
@@ -511,9 +513,9 @@ namespace ApptentiveSDK
 
 #endif // UNITY_ANDROID
 
-#endregion // Platform
+        #endregion // Platform
 
-#region Native callback
+        #region Native callback
 
         void NativeMessageCallback(string data)
         {
@@ -590,7 +592,7 @@ namespace ApptentiveSDK
             }
         }
 
-#endregion
+        #endregion
 
         #region Public interface
 
@@ -680,6 +682,16 @@ namespace ApptentiveSDK
             {
                 Debug.LogErrorFormat("[Apptentive] Unable to check if message center can be shown: exception is thrown: {1}", e.Message);
             }
+        }
+
+        public static void RegisterUnreadMessageDelegate(Action<int> del)
+        {
+            throw new NotImplementedException();
+        }
+
+        public static void UnregisterUnreadMessageDelegate(Action<int> del)
+        {
+            throw new NotImplementedException();
         }
 
         #endregion
