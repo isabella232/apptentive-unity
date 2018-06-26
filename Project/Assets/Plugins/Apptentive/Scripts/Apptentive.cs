@@ -686,12 +686,12 @@ namespace ApptentiveSDK
 
         public static void RegisterUnreadMessageDelegate(Action<int> del)
         {
-            throw new NotImplementedException();
+            // throw new NotImplementedException();
         }
 
         public static void UnregisterUnreadMessageDelegate(Action<int> del)
         {
-            throw new NotImplementedException();
+            // throw new NotImplementedException();
         }
 
         #endregion
