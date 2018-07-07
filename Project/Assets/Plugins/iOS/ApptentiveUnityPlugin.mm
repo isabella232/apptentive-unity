@@ -13,13 +13,20 @@
 
 #import "UnityAppController.h"
 
+static NSUInteger _nextCallbackId;
+
 @interface ApptentiveBooleanIdCallback : NSObject
 
 @property (nonatomic, readonly) NSUInteger identifier;
+@property (nonatomic, readonly) NSString *name;
+@property (nonatomic, readonly, copy) void (^callbackBlock)(BOOL);
+
++ (instancetype)callbackWithName:(NSString *)name;
+- (instancetype)initWithName:(NSString *)name;
 
 @end
 
-@interface ApptentiveUnityPlugin () <ApptentiveDelegate>
+@interface ApptentiveUnityPlugin ()
 {
     ApptentiveScriptMessenger * _scriptMessenger;
 }
@@ -29,17 +36,16 @@
 @implementation ApptentiveUnityPlugin
 
 - (instancetype)initWithTargetName:(NSString *)targetName
-                        methodName:(NSString *)methodName
-                           version:(NSString *)version
-                            APIKey:(NSString *)APIKey
+						methodName:(NSString *)methodName
+						   version:(NSString *)version
+					 configuration:(ApptentiveConfiguration *)configuration
 {
     self = [super init];
     if (self)
     {
-        [Apptentive sharedConnection].APIKey = APIKey;
-        [Apptentive sharedConnection].delegate = self;
-        
-        _scriptMessenger = [[ApptentiveScriptMessenger alloc] initWithTargetName:targetName methodName:methodName];
+		_scriptMessenger = [[ApptentiveScriptMessenger alloc] initWithTargetName:targetName methodName:methodName];
+		
+		[Apptentive registerWithConfiguration:configuration];
     }
     return self;
 }
@@ -47,30 +53,52 @@
 #pragma mark -
 #pragma mark Public interface
 
-- (BOOL)presentMessageCenterWithCustomData:(NSDictionary *)customData
+- (NSUInteger)presentMessageCenterWithCustomData:(NSDictionary *)customData
 {
-    return [[Apptentive sharedConnection] presentMessageCenterFromViewController:self.rootViewController withCustomData:customData];
+	NSUInteger callbackId = [self nextCallbackId];
+	
+	__weak ApptentiveUnityPlugin *weakSelf = self;
+	[Apptentive.shared presentMessageCenterFromViewController:self.rootViewController
+											   withCustomData:customData
+												   completion:^(BOOL presented) {
+		[weakSelf sendNativeCallbackId:callbackId name:@""];
+	}];
+	
+	return callbackId;
 }
 
-- (BOOL)canShowInteractionForEvent:(NSString *)event
+- (NSUInteger)canShowInteractionForEvent:(NSString *)event
 {
     return [[Apptentive sharedConnection] canShowInteractionForEvent:event];
 }
 
-- (BOOL)engage:(NSString *)event withCustomData:(NSDictionary *)customData withExtendedData:(NSArray<NSDictionary *> *)extendedData
+- (NSUInteger)engage:(NSString *)event withCustomData:(NSDictionary *)customData withExtendedData:(NSArray<NSDictionary *> *)extendedData
 {
-    return [[Apptentive sharedConnection] engage:event
-                                  withCustomData:customData
-                                withExtendedData:extendedData
-                              fromViewController:self.rootViewController];
+	NSUInteger callbackId = [self nextCallbackId];
+	
+	[Apptentive.shared engage:event withCustomData:customData
+			 withExtendedData:extendedData
+		   fromViewController:self.rootViewController
+				   completion:^(BOOL engaged) {
+		   // TODO: send callback id
+	}];
+	
+	return callbackId;
 }
 
 #pragma mark -
-#pragma mark ApptentiveDelegate
+#pragma mark Native Messages
 
-- (UIViewController *)viewControllerForInteractionsWithConnection:(Apptentive *)connection
+- (NSUInteger)nextCallbackId
 {
-    return self.rootViewController;
+	@synchronized (self)
+	{
+		return ++_nextCallbackId;
+	}
+}
+
+- (void)sendNativeCallbackId:(NSUInteger)callbackId name:(NSString *)name
+{
 }
 
 #pragma mark -
@@ -97,14 +125,20 @@ static NSUInteger _nextCallbackId;
 
 @implementation ApptentiveBooleanIdCallback
 
-- (instancetype)init
++ (instancetype)callbackWithName:(NSString *)name
+{
+	return [[[self class] alloc] initWithName:name];
+}
+
+- (instancetype)initWithName:(NSString *)name
 {
 	self = [super init];
 	if (self)
 	{
-		_identifier = ++_nextCallbackId;
+		_identifier = ++_nextCallbackId; // TODO:
+		_name = name;
 	}
-	return this;
+	return self;
 }
 
 @end

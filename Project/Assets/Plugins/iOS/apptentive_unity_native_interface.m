@@ -8,17 +8,86 @@
 
 #import "apptentive_unity_native_interface.h"
 
+#import "Apptentive.h"
 #import "ApptentiveUnityPlugin.h"
 
 static ApptentiveUnityPlugin * _instance;
 
-void __apptentive_initialize(const char *targetNameStr, const char *methodNameStr, const char *versionStr, const char *APIKeyStr)
+static BOOL _parseBoolean(NSString *value)
 {
+	return value != nil && [value isEqualToString:@"true"];
+}
+
+static ApptentiveLogLevel _parseApptentiveLogLevel(NSString *value)
+{
+	if (value)
+	{
+		if ([value isEqualToString:@"Verbose"])
+			return ApptentiveLogLevelVerbose;
+		
+		if ([value isEqualToString:@"Debug"])
+			return ApptentiveLogLevelDebug;
+		
+		if ([value isEqualToString:@"Warn"])
+			return ApptentiveLogLevelWarn;
+		
+		if ([value isEqualToString:@"Error"])
+			return ApptentiveLogLevelError;
+	}
+	
+	return ApptentiveLogLevelInfo;
+}
+
+static ApptentiveConfiguration * _Nullable _parseApptentiveConfiguration(NSString *jsonString)
+{
+	NSData *data = [jsonString dataUsingEncoding:NSUTF8StringEncoding];
+	if (data == nil)
+	{
+		NSLog(@"Unable to create data from UTF-string: '%@'", jsonString);
+		return nil;
+	}
+	
+	NSError *error;
+	id object = [NSJSONSerialization JSONObjectWithData:data options:0 error:&error];
+	if (error)
+	{
+		NSLog(@"Unable to parse JSON data: '%@'\n%@", jsonString, error);
+		return nil;
+	}
+	
+	if (![object isKindOfClass:[NSDictionary class]])
+	{
+		NSLog(@"Unexpected JSON object class: %@", [object class]);
+		return nil;
+	}
+	
+	NSDictionary *dict = object;
+	
+	NSString *apptentiveKey = dict[@"apptentiveKey"];
+	NSString *apptentiveSignature = dict[@"apptentiveSignature"];
+	ApptentiveLogLevel logLevel = _parseApptentiveLogLevel(dict[@"logLevel"]);
+	BOOL shouldSanitizeLogMessages = _parseBoolean(dict[@"shouldSanitizeLogMessages"]);
+	
+	ApptentiveConfiguration *configuration = [ApptentiveConfiguration configurationWithApptentiveKey:apptentiveKey apptentiveSignature:apptentiveSignature];
+	configuration.logLevel = logLevel;
+	configuration.shouldSanitizeLogMessages = shouldSanitizeLogMessages;
+	
+	return configuration;
+}
+
+void __apptentive_initialize(const char *targetNameStr, const char *methodNameStr, const char *versionStr, const char *configurationJsonStr)
+{
+	NSString *configurationJson = [[NSString alloc] initWithUTF8String:configurationJsonStr];
+	ApptentiveConfiguration *configuration = _parseApptentiveConfiguration(configurationJson);
+	if (configuration == nil)
+	{
+		return;
+	}
+	
     // FIXME: thread safety
     NSString *targetName = [[NSString alloc] initWithUTF8String:targetNameStr];
     NSString *methodName = [[NSString alloc] initWithUTF8String:methodNameStr];
     NSString *version = [[NSString alloc] initWithUTF8String:versionStr];
-    NSString *APIKey = [[NSString alloc] initWithUTF8String:APIKeyStr];
     _instance = [[ApptentiveUnityPlugin alloc] initWithTargetName:targetName
                                                        methodName:methodName
                                                           version:version

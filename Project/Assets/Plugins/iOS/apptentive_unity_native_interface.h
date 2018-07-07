@@ -10,7 +10,7 @@
 #define apptentive_unity_native_interface_h
 
 // life cycle
-OBJC_EXTERN void __apptentive_initialize(const char *targetName, const char *methodName, const char *version, const char *APIKey);
+OBJC_EXTERN void __apptentive_initialize(const char *targetName, const char *methodName, const char *version, const char *configuration);
 
 OBJC_EXTERN void __apptentive_destroy(void);
 

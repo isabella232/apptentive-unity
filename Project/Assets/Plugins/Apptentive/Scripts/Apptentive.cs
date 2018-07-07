@@ -704,7 +704,7 @@ namespace ApptentiveSDK
             payload["apptentiveKey"] = configuration.appKey;
             payload["apptentiveSignature"] = configuration.appSignature;
             payload["logLevel"] = configuration.logLevel;
-            payload["shouldSanitizeLogMessages"] = configuration.sanitizeLogMessages;
+            payload["shouldSanitizeLogMessages"] = configuration.sanitizeLogMessages ? "true" : "false";
             return JsonUtils.ToJson(payload);
         }
 

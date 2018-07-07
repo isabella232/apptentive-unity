@@ -8,6 +8,10 @@
 
 #import <Foundation/Foundation.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
+@class ApptentiveConfiguration;
+
 @interface ApptentiveUnityPlugin : NSObject
 
 @property (readonly, nonatomic) BOOL canShowMessageCenter;
@@ -16,10 +20,12 @@
 - (instancetype)initWithTargetName:(NSString *)targetName
                         methodName:(NSString *)methodName
                            version:(NSString *)version
-                            APIKey:(NSString *)APIKey;
+					 configuration:(ApptentiveConfiguration *)configuration;
 
-- (BOOL)presentMessageCenterWithCustomData:(NSDictionary *)customData;
-- (BOOL)canShowInteractionForEvent:(NSString *)event;
-- (BOOL)engage:(NSString *)event withCustomData:(NSDictionary *)customData withExtendedData:(NSArray<NSDictionary *> *)extendedData;
+- (NSUInteger)presentMessageCenterWithCustomData:(NSDictionary *)customData;
+- (NSUInteger)canShowInteractionForEvent:(NSString *)event;
+- (NSUInteger)engage:(NSString *)event withCustomData:(NSDictionary *)customData withExtendedData:(NSArray<NSDictionary *> *)extendedData;
 
 @end
+
+NS_ASSUME_NONNULL_END
