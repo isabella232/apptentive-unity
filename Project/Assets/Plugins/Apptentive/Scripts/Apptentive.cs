@@ -209,25 +209,25 @@ namespace ApptentiveSDK
                 m_callbackLookup = new Dictionary<int, Delegate>();
             }
 
-            public void Engage(string evt, IDictionary<string, object> customData, Action<Boolean> callback)
+            public void Engage(string evt, IDictionary<string, object> customData, Action<bool> callback)
             {
                 int callbackId = Engage(evt, customData);
                 RegisterCallback(callbackId, callback);
             }
 
-            public void PresentMessageCenter(IDictionary<string, object> customData, Action<Boolean> callback)
+            public void PresentMessageCenter(IDictionary<string, object> customData, Action<bool> callback)
             {
                 int callbackId = PresentMessageCenter(customData);
                 RegisterCallback(callbackId, callback);
             }
 
-            public void CanShowInteraction(string eventName, Action<Boolean> callback)
+            public void CanShowInteraction(string eventName, Action<bool> callback)
             {
                 int callbackId = CanShowInteraction(eventName);
                 RegisterCallback(callbackId, callback);
             }
 
-            public void CanShowMessageCenter(Action<Boolean> callback)
+            public void CanShowMessageCenter(Action<bool> callback)
             {
                 int callbackId = CanShowMessageCenter();
                 RegisterCallback(callbackId, callback);
@@ -306,7 +306,7 @@ namespace ApptentiveSDK
 
             public PlatformIOS(string targetName, string methodName, string version, ApptentiveConfiguration configuration)
             {
-                var configurationDict = JsonUtils.ToJson(configuration);
+                var configurationDict = ToJson(configuration);
                 __apptentive_initialize(targetName, methodName, version, configurationDict);
             }
 
@@ -458,7 +458,7 @@ namespace ApptentiveSDK
                 throw new NotImplementedException();
             }
 
-            #region Helpers
+        #region Helpers
 
             private static IntPtr GetStaticMethod(IntPtr classRaw, string name, string signature)
             {
@@ -508,7 +508,7 @@ namespace ApptentiveSDK
                 return val;
             }
 
-            #endregion
+        #endregion
         }
 
 #endif // UNITY_ANDROID
@@ -713,7 +713,7 @@ namespace ApptentiveSDK
             object value;
             if (dict.TryGetValue(key, out value) && value is T)
             {
-                return (T) value;
+                return (T)value;
             }
 
             return defaultValue;

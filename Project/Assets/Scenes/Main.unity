@@ -339,6 +339,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c07f642dab1fb4822b13fbb062010c04, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_unreadMessagesText: {fileID: 0}
 --- !u!1001 &892628678
 Prefab:
   m_ObjectHideFlags: 0
@@ -407,6 +408,16 @@ Prefab:
         type: 2}
       propertyPath: m_configuration.m_sanitizeLogMessages
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114580378610514148, guid: 97a9b78888f92421da8e5e7240c06dc5,
+        type: 2}
+      propertyPath: m_configuration.m_ios.m_appKey
+      value: IOS-UNITY-IOS-639de6684bd8
+      objectReference: {fileID: 0}
+    - target: {fileID: 114580378610514148, guid: 97a9b78888f92421da8e5e7240c06dc5,
+        type: 2}
+      propertyPath: m_configuration.m_ios.m_appSignature
+      value: a79ef84a79f3999bd26b2f475b0fd24e
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 97a9b78888f92421da8e5e7240c06dc5, type: 2}
