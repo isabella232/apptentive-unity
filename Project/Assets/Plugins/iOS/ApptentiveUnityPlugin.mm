@@ -13,6 +13,12 @@
 
 #import "UnityAppController.h"
 
+@interface ApptentiveBooleanIdCallback : NSObject
+
+@property (nonatomic, readonly) NSUInteger identifier;
+
+@end
+
 @interface ApptentiveUnityPlugin () <ApptentiveDelegate>
 {
     ApptentiveScriptMessenger * _scriptMessenger;
@@ -83,6 +89,22 @@
 - (UIViewController *)rootViewController
 {
     return GetAppController().rootViewController;
+}
+
+@end
+
+static NSUInteger _nextCallbackId;
+
+@implementation ApptentiveBooleanIdCallback
+
+- (instancetype)init
+{
+	self = [super init];
+	if (self)
+	{
+		_identifier = ++_nextCallbackId;
+	}
+	return this;
 }
 
 @end
