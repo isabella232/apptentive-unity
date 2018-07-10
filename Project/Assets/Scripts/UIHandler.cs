@@ -37,9 +37,7 @@ public class UIHandler : MonoBehaviour
         {
             if (!succesful)
             {
-                MNPopup popup = new MNPopup(title, message != null ? message : (title + " was not engaged"));
-                popup.AddAction("Close", () => { });
-                popup.Show();
+                Debug.LogFormat(message != null ? message : (title + " was not engaged"));
             }
         };
     }
