@@ -81,13 +81,13 @@ namespace ApptentiveSDK
 
         ApptentivePlatformConfiguration currentPlatformConfiguration
         {
-            #if UNITY_IOS || UNITY_IPHONE
+#if UNITY_IOS || UNITY_IPHONE
             get { return m_ios; }
-            #elif UNITY_ANDROID
+#elif UNITY_ANDROID
             get { return m_android; }
-            #else
+#else
             get { return null; }
-            #endif
+#endif
         }
     }
 
@@ -196,6 +196,7 @@ namespace ApptentiveSDK
             void PresentMessageCenter(IDictionary<string, object> customData, Action<Boolean> callback);
             void CanShowInteraction(string eventName, Action<Boolean> callback);
             void CanShowMessageCenter(Action<Boolean> callback);
+            int unreadMessageCount { get; }
         }
 
         abstract class Platform : IPlatform
@@ -209,7 +210,7 @@ namespace ApptentiveSDK
                 m_callbackLookup = new Dictionary<int, Delegate>();
             }
 
-            public void Engage(string evt, IDictionary<string, object> customData, Action<bool> callback)
+            public void Engage(string evt, IDictionary<string, object> customData, Action<Boolean> callback)
             {
                 int callbackId = Engage(evt, customData);
                 RegisterCallback(callbackId, callback);
@@ -233,6 +234,11 @@ namespace ApptentiveSDK
                 RegisterCallback(callbackId, callback);
             }
 
+            public abstract int unreadMessageCount
+            {
+                get;
+            }
+
             protected abstract int Engage(string evt, IDictionary<string, object> customData);
 
             protected abstract int PresentMessageCenter(IDictionary<string, object> customData);
@@ -241,7 +247,7 @@ namespace ApptentiveSDK
 
             protected abstract int CanShowMessageCenter();
 
-            void RegisterCallback(int callbackId, Delegate callback)
+            protected void RegisterCallback(int callbackId, Delegate callback)
             {
                 if (callback != null)
                 {
@@ -281,6 +287,14 @@ namespace ApptentiveSDK
                 if (callback != null)
                 {
                     callback(false);
+                }
+            }
+
+            public override int unreadMessageCount
+            {
+                get
+                {
+                    return 0;
                 }
             }
         }
@@ -333,7 +347,7 @@ namespace ApptentiveSDK
 
 #elif UNITY_ANDROID
 
-        class PlatformAndroid : IPlatform
+        class PlatformAndroid : Platform
         {
             private static readonly string kPluginClassName = "com.apptentive.android.sdk.unity.ApptentiveUnity";
             private readonly object mutex = new object();
@@ -386,7 +400,7 @@ namespace ApptentiveSDK
                 }
 
                 // register methods
-                m_methodShowMessageCenter = GetStaticMethod(m_pluginClassRaw, "showMessageCenter", "(Ljava.lang.String;)I");;
+                m_methodShowMessageCenter = GetStaticMethod(m_pluginClassRaw, "showMessageCenter", "(Ljava.lang.String;)I"); ;
                 m_methodCanShowMessageCenter = GetStaticMethod(m_pluginClassRaw, "canShowMessageCenter", "()I"); ;
                 m_methodGetUnreadMessageCount = GetStaticMethod(m_pluginClassRaw, "getUnreadMessageCount", "()I"); ;
                 m_methodEngage = GetStaticMethod(m_pluginClassRaw, "engage", "(Ljava.lang.String;Ljava.lang.String;)I"); ;
@@ -400,7 +414,7 @@ namespace ApptentiveSDK
                 m_pluginClass.Dispose();
             }
 
-            public void Engage(string evt, IDictionary<string, object> customData, Action<bool> callback)
+            protected override int Engage(string evt, IDictionary<string, object> customData)
             {
                 lock (mutex)
                 {
@@ -409,56 +423,60 @@ namespace ApptentiveSDK
                         m_args2[0] = jval(evt);
                         m_args2[1] = jval(customData != null && customData.Count > 0 ? JsonUtils.ToJson(customData) : "{}");
 
-                        int callbackId = CallStaticIntMethod(m_methodEngage, m_args2);
-
+                        return CallStaticIntMethod(m_methodEngage, m_args2);
+                    }
+                    finally
+                    {
                         AndroidJNI.DeleteLocalRef(m_args2[0].l);
                         AndroidJNI.DeleteLocalRef(m_args2[1].l);
-                    }
-                    catch (Exception e)
-                    {
-                        Debug.LogError("Exception while calling 'Apptentive.Engage': " + e.Message);
-                        if (callback != null)
-                        {
-                            callback(false);
-                        }
                     }
                 }
             }
 
-            public void PresentMessageCenter(IDictionary<string, object> customData, Action<bool> callback)
+            protected override int PresentMessageCenter(IDictionary<string, object> customData)
             {
                 lock (mutex)
                 {
                     try
                     {
                         m_args1[0] = jval(customData != null && customData.Count > 0 ? JsonUtils.ToJson(customData) : "{}");
-
-                        int callbackId = CallStaticIntMethod(m_methodShowMessageCenter, m_args1);
-
-                        AndroidJNI.DeleteLocalRef(m_args1[0].l);
+                        return CallStaticIntMethod(m_methodShowMessageCenter, m_args1);
                     }
-                    catch (Exception e)
+                    finally
                     {
-                        Debug.LogError("Exception while calling 'Apptentive.PresentMessageCenter': " + e.Message);
-                        if (callback != null)
-                        {
-                            callback(false);
-                        }
+                        AndroidJNI.DeleteLocalRef(m_args1[0].l);
                     }
                 }
             }
 
-            public void CanShowInteraction(string eventName, Action<bool> callback)
+            protected override int CanShowInteraction(string eventName)
             {
-                throw new NotImplementedException();
+                lock (mutex)
+                {
+                    return CallStaticIntMethod(m_methodGetUnreadMessageCount, m_args0);
+                }
             }
 
-            void IPlatform.CanShowMessageCenter(Action<bool> callback)
+            protected override int CanShowMessageCenter()
             {
-                throw new NotImplementedException();
+                lock (mutex)
+                {
+                    return CallStaticIntMethod(m_methodCanShowMessageCenter, m_args0);
+                }
             }
 
-        #region Helpers
+            public override int unreadMessageCount
+            {
+                get
+                {
+                    lock (mutex)
+                    {
+                        return CallStaticIntMethod(m_methodGetUnreadMessageCount, m_args0);
+                    }
+                }
+            }
+
+            #region Helpers
 
             private static IntPtr GetStaticMethod(IntPtr classRaw, string name, string signature)
             {
@@ -508,7 +526,7 @@ namespace ApptentiveSDK
                 return val;
             }
 
-        #endregion
+            #endregion
         }
 
 #endif // UNITY_ANDROID
@@ -568,7 +586,8 @@ namespace ApptentiveSDK
                 if (m_nativeHandlerLookup == null)
                 {
                     m_nativeHandlerLookup = new Dictionary<string, ApptentiveNativeCallbackHandler>();
-                    m_nativeHandlerLookup["booleanCallback"] = (name, payload) => {
+                    m_nativeHandlerLookup["booleanCallback"] = (name, payload) =>
+                    {
                         var id = GetValue<int>(payload, "id", -1);
                         if (id == -1)
                         {
