@@ -19,7 +19,7 @@ import java.util.Map;
 
 import static com.unity3d.player.UnityPlayer.currentActivity;
 
-public final class ApptentiveUnity implements UnreadMessagesListener {
+public final class ApptentiveUnity {
 	private static final String TAG = ApptentiveUnity.class.getSimpleName();
 
 	private static final String CALLBACK_NAME_BOOLEAN = "booleanCallback";
@@ -28,6 +28,16 @@ public final class ApptentiveUnity implements UnreadMessagesListener {
 	private static String scriptTarget;
 	private static String scriptMethod;
 
+	// we have to keep a strong reference to the listener since the SDK doesn't keep it
+	private static UnreadMessagesListener unreadMessagesListener = new UnreadMessagesListener() {
+		@Override
+		public void onUnreadMessageCountChanged(int unreadMessages) {
+			Map<String, Object> payload = new HashMap<>();
+			payload.put("unreadMessages", unreadMessages);
+			sendNativeCallback(CALLBACK_NAME_UNREAD_MESSAGE_COUNT_CHANGED, payload);
+		}
+	};
+
 	public static boolean register(String target, String method, String version, String configurationJson) {
 		try {
 			scriptTarget = target;
@@ -35,6 +45,7 @@ public final class ApptentiveUnity implements UnreadMessagesListener {
 
 			ApptentiveConfiguration configuration = parseConfiguration(configurationJson);
 			Apptentive.register(getApplication(), configuration);
+			Apptentive.addUnreadMessagesListener(unreadMessagesListener);
 
 			Application.ActivityLifecycleCallbacks callbacks = getActivityLifecycleCallbacks();
 			callbacks.onActivityCreated(getActivity(), null);
@@ -122,17 +133,6 @@ public final class ApptentiveUnity implements UnreadMessagesListener {
 		}
 
 		return ApptentiveLog.Level.UNKNOWN;
-	}
-
-	//endregion
-
-	//region UnreadMessagesListener
-
-	@Override
-	public void onUnreadMessageCountChanged(int unreadMessages) {
-		Map<String, Object> payload = new HashMap<>();
-		payload.put("unreadMessages", unreadMessages);
-		sendNativeCallback(CALLBACK_NAME_UNREAD_MESSAGE_COUNT_CHANGED, payload);
 	}
 
 	//endregion

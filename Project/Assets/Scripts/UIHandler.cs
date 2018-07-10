@@ -14,6 +14,7 @@ public class UIHandler : MonoBehaviour
         Apptentive.RegisterUnreadMessageDelegate(delegate(int unreadMesssages) {
             m_unreadMessagesText.text = "Unread message count: " + unreadMesssages;
         });
+        m_unreadMessagesText.text = "Unread message count: " + Apptentive.UnreadMessageCount;
     }
 
     public void OnLoveDialogButton()

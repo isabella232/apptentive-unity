@@ -339,7 +339,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c07f642dab1fb4822b13fbb062010c04, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_unreadMessagesText: {fileID: 0}
+  m_unreadMessagesText: {fileID: 995125049}
 --- !u!1001 &892628678
 Prefab:
   m_ObjectHideFlags: 0

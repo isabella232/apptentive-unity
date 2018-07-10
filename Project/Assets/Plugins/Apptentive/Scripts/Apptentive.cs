@@ -197,7 +197,7 @@ namespace ApptentiveSDK
             void PresentMessageCenter(IDictionary<string, object> customData, Action<Boolean> callback);
             void CanShowInteraction(string eventName, Action<Boolean> callback);
             void CanShowMessageCenter(Action<Boolean> callback);
-            int unreadMessageCount { get; }
+            int UnreadMessageCount { get; }
         }
 
         abstract class Platform : IPlatform
@@ -235,7 +235,7 @@ namespace ApptentiveSDK
                 RegisterCallback(callbackId, callback);
             }
 
-            public abstract int unreadMessageCount
+            public abstract int UnreadMessageCount
             {
                 get;
             }
@@ -300,7 +300,7 @@ namespace ApptentiveSDK
                 }
             }
 
-            public int unreadMessageCount
+            public int UnreadMessageCount
             {
                 get
                 {
@@ -475,7 +475,7 @@ namespace ApptentiveSDK
                 }
             }
 
-            public override int unreadMessageCount
+            public override int UnreadMessageCount
             {
                 get
                 {
@@ -750,6 +750,14 @@ namespace ApptentiveSDK
             if (s_instance != null)
             {
                 s_instance.m_unreadMessageDelegates.Remove(del);
+            }
+        }
+
+        public static int UnreadMessageCount
+        {
+            get
+            {
+                return s_instance != null ? s_instance.platform.UnreadMessageCount : 0;
             }
         }
 
