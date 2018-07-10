@@ -2,18 +2,12 @@ package com.apptentive.android.sdk.unity;
 
 import android.app.Activity;
 import android.app.Application;
-import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.apptentive.android.sdk.Apptentive;
 import com.apptentive.android.sdk.ApptentiveConfiguration;
-import com.apptentive.android.sdk.ApptentiveInstance;
-import com.apptentive.android.sdk.ApptentiveInternal;
 import com.apptentive.android.sdk.ApptentiveLog;
-import com.apptentive.android.sdk.lifecycle.ApptentiveActivityLifecycleCallbacks;
 import com.apptentive.android.sdk.module.messagecenter.UnreadMessagesListener;
-import com.apptentive.android.sdk.util.RuntimeUtils;
-import com.apptentive.android.sdk.util.StringUtils;
 import com.unity3d.player.UnityPlayer;
 
 import org.json.JSONException;
@@ -27,7 +21,9 @@ import static com.unity3d.player.UnityPlayer.currentActivity;
 
 public final class ApptentiveUnity implements UnreadMessagesListener {
 	private static final String TAG = ApptentiveUnity.class.getSimpleName();
+
 	private static final String CALLBACK_NAME_BOOLEAN = "booleanCallback";
+	private static final String CALLBACK_NAME_UNREAD_MESSAGE_COUNT_CHANGED = "unreadMessageCountChanged";
 
 	private static String scriptTarget;
 	private static String scriptMethod;
@@ -53,13 +49,13 @@ public final class ApptentiveUnity implements UnreadMessagesListener {
 	}
 
 	public static int showMessageCenter(String customData) {
-		BooleanIdCallback callback = new BooleanIdCallback("showMessageCenter");
+		BooleanIdCallback callback = new BooleanIdCallback();
 		Apptentive.showMessageCenter(getActivity(), callback);
 		return callback.getId();
 	}
 
 	public static int canShowMessageCenter() {
-		BooleanIdCallback callback = new BooleanIdCallback("canShowMessageCenter");
+		BooleanIdCallback callback = new BooleanIdCallback();
 		Apptentive.canShowMessageCenter(callback);
 		return callback.getId();
 	}
@@ -69,13 +65,13 @@ public final class ApptentiveUnity implements UnreadMessagesListener {
 	}
 
 	public static int engage(String event, String customData) {
-		BooleanIdCallback callback = new BooleanIdCallback("engage");
+		BooleanIdCallback callback = new BooleanIdCallback();
 		Apptentive.engage(getActivity(), event, callback);
 		return callback.getId();
 	}
 
 	public static int queryCanShowInteraction(String event) {
-		BooleanIdCallback callback = new BooleanIdCallback("queryCanShowInteraction");
+		BooleanIdCallback callback = new BooleanIdCallback();
 		Apptentive.queryCanShowInteraction(event, callback);
 		return callback.getId();
 	}
@@ -135,8 +131,8 @@ public final class ApptentiveUnity implements UnreadMessagesListener {
 	@Override
 	public void onUnreadMessageCountChanged(int unreadMessages) {
 		Map<String, Object> payload = new HashMap<>();
-		payload.put("count", unreadMessages);
-		sendNativeCallback("unreadMessageCountChanged", payload);
+		payload.put("unreadMessages", unreadMessages);
+		sendNativeCallback(CALLBACK_NAME_UNREAD_MESSAGE_COUNT_CHANGED, payload);
 	}
 
 	//endregion
@@ -146,11 +142,9 @@ public final class ApptentiveUnity implements UnreadMessagesListener {
 	private static class BooleanIdCallback implements Apptentive.BooleanCallback {
 		private static int nextId;
 
-		private final String name;
 		private final int id;
 
-		public BooleanIdCallback(@NonNull String name) {
-			this.name = name;
+		public BooleanIdCallback() {
 			this.id = getNextId();
 		}
 
@@ -158,7 +152,6 @@ public final class ApptentiveUnity implements UnreadMessagesListener {
 		public void onFinish(boolean result) {
 			Map<String, Object> payload = new HashMap<>();
 			payload.put("id", id);
-			payload.put("methodName", name);
 			payload.put("result", result);
 			sendNativeCallback(CALLBACK_NAME_BOOLEAN, payload);
 		}

@@ -10,9 +10,10 @@ using ApptentiveSDKInternal;
 
 namespace ApptentiveSDK
 {
+    public delegate void ApptentiveUnreadMessageDelegate(int unreadMessageCount);
+
     delegate void ApptentiveNativeCallback(string payload);
     delegate void ApptentiveNativeCallbackHandler(string name, IDictionary<string, object> data);
-    delegate void ApptentiveUnreadMessageDelegate(int unreadMessageCount);
 
     [Serializable]
     public class ApptentivePlatformConfiguration
@@ -203,11 +204,11 @@ namespace ApptentiveSDK
         {
             public static readonly IPlatform Null = new NullPlatform();
 
-            readonly IDictionary<int, Delegate> m_callbackLookup;
+            readonly IDictionary<int, Action<bool>> m_callbackLookup;
 
             public Platform()
             {
-                m_callbackLookup = new Dictionary<int, Delegate>();
+                m_callbackLookup = new Dictionary<int, Action<bool>>();
             }
 
             public void Engage(string evt, IDictionary<string, object> customData, Action<Boolean> callback)
@@ -247,11 +248,20 @@ namespace ApptentiveSDK
 
             protected abstract int CanShowMessageCenter();
 
-            protected void RegisterCallback(int callbackId, Delegate callback)
+            protected void RegisterCallback(int callbackId, Action<bool> callback)
             {
                 if (callback != null)
                 {
                     m_callbackLookup[callbackId] = callback; // TODO: check for duplicates
+                }
+            }
+
+            internal void OnCallbackResult(int callbackId, bool result)
+            {
+                Action<bool> callback;
+                if (m_callbackLookup.TryGetValue(callbackId, out callback))
+                {
+                    callback(result);
                 }
             }
         }
@@ -290,7 +300,7 @@ namespace ApptentiveSDK
                 }
             }
 
-            public override int unreadMessageCount
+            public int unreadMessageCount
             {
                 get
                 {
@@ -579,6 +589,24 @@ namespace ApptentiveSDK
             }
         }
 
+        void OnBooleanCallbackResult(int callbackId, bool result)
+        {
+            var platform = m_platform as Platform;
+            if (platform != null)
+            {
+                platform.OnCallbackResult(callbackId, result);
+            }
+        }
+
+        void OnUnreadMessageChanged(int unreadMessages)
+        {
+            List<ApptentiveUnreadMessageDelegate> temp = new List<ApptentiveUnreadMessageDelegate>(m_unreadMessageDelegates);
+            foreach (var del in temp)
+            {
+                del(unreadMessages);
+            }
+        }
+
         IDictionary<string, ApptentiveNativeCallbackHandler> nativeHandlerLookup
         {
             get
@@ -588,22 +616,27 @@ namespace ApptentiveSDK
                     m_nativeHandlerLookup = new Dictionary<string, ApptentiveNativeCallbackHandler>();
                     m_nativeHandlerLookup["booleanCallback"] = (name, payload) =>
                     {
-                        var id = GetValue<int>(payload, "id", -1);
-                        if (id == -1)
+                        var callbackId = GetValue<int>(payload, "id", -1);
+                        if (callbackId == -1)
                         {
                             Debug.LogError("Missing or invalid 'id' key");
                             return;
                         }
 
-                        var methodName = GetValue<string>(payload, "methodName");
-                        if (methodName == null)
+                        var result = GetValue<bool>(payload, "result");
+                        OnBooleanCallbackResult(callbackId, result);
+                    };
+                    m_nativeHandlerLookup["unreadMessageCountChanged"] = (name, payload) =>
+                    {
+                        var unreadMessages = GetValue<int>(payload, "unreadMessages", -1);
+                        if (unreadMessages == -1)
                         {
-                            Debug.LogError("Missing or invalid 'methodName' key");
+                            Debug.LogError("Missing on invalid 'unreadMessages' key");
                             return;
                         }
 
-                        var result = GetValue<bool>(payload, "result");
-                        Debug.LogFormat("id={0} methodName={1} result={2}", id.ToString(), methodName, result.ToString());
+                        Debug.LogFormat("Unread message changed: {0}", unreadMessages);
+                        OnUnreadMessageChanged(unreadMessages);
                     };
                 }
 
@@ -703,14 +736,21 @@ namespace ApptentiveSDK
             }
         }
 
-        public static void RegisterUnreadMessageDelegate(Action<int> del)
+        public static void RegisterUnreadMessageDelegate(ApptentiveUnreadMessageDelegate del)
         {
-            // throw new NotImplementedException();
+            if (s_instance != null && !s_instance.m_unreadMessageDelegates.Contains(del))
+            {
+                s_instance.m_unreadMessageDelegates.Add(del);
+            }
+
         }
 
-        public static void UnregisterUnreadMessageDelegate(Action<int> del)
+        public static void UnregisterUnreadMessageDelegate(ApptentiveUnreadMessageDelegate del)
         {
-            // throw new NotImplementedException();
+            if (s_instance != null)
+            {
+                s_instance.m_unreadMessageDelegates.Remove(del);
+            }
         }
 
         #endregion
